@@ -5,8 +5,9 @@ using System.Runtime.InteropServices;
 namespace ExplorerX.Wrapper {
 
 	public class ShellExcute {
-		private	string? exePath;
-		public	string? ExePath {
+		private string? exePath;
+
+		public string? ExePath {
 			get => exePath;
 			set {
 				if (File.Exists(value))
@@ -20,6 +21,7 @@ namespace ExplorerX.Wrapper {
 		public string Params { get; set; }
 
 		private string? workingDirectory;
+
 		public string? WorkingDirectory {
 			get => workingDirectory;
 			set {

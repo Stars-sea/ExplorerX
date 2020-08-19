@@ -43,6 +43,7 @@ namespace ExplorerX.Controls {
 
 			DirectoryPath = dirPath;
 		}
+
 		public PathsList(string dirPath, RoutedEventHandler handler) : this(dirPath)
 			=> ItemClick += handler;
 

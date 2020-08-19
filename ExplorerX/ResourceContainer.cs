@@ -5,10 +5,13 @@ using System.IO;
 using System.Windows.Media;
 
 namespace ExplorerX {
+
 	public class ResourceContainer {
+
 		private static readonly string[] Units = new string[] {
 			"B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "BB"
 		};
+
 		private static readonly Dictionary<string, WeakReference<ResourceContainer>> Cache =
 			new Dictionary<string, WeakReference<ResourceContainer>>();
 
@@ -48,6 +51,7 @@ namespace ExplorerX {
 				Info = new DirectoryInfo(path);
 			throw new FileNotFoundException($"Not found file/directory {path}");
 		}
+
 		~ResourceContainer() => Cache.Remove(Info.FullName);
 
 		public static ResourceContainer Create(FileSystemInfo info) {
@@ -59,14 +63,15 @@ namespace ExplorerX {
 
 		public static ResourceContainer Create(string path) {
 			if (Cache.TryGetValue(path, out var reference))
-				if (reference.TryGetTarget(out ResourceContainer? container) && container != null) 
+				if (reference.TryGetTarget(out ResourceContainer? container) && container != null)
 					return container;
 			return new ResourceContainer(path);
 		}
 
 		public override string ToString() => Path;
 
-		public static implicit operator string(ResourceContainer container)	=> container.Path;
-		public static implicit operator ResourceContainer(string path)		=> Create(path);
+		public static implicit operator string(ResourceContainer container) => container.Path;
+
+		public static implicit operator ResourceContainer(string path) => Create(path);
 	}
 }

@@ -13,34 +13,31 @@
 
 	<Grid>
 		<controls:CustomTabControl x:Name="MainTabControl" BorderThickness="0" Background="Transparent"
-								   IsGlobal="True" IsJumpToNewTab="True" ContentType="{x:Type local:ResourcesViewer}"/>
+								   IsGlobal="True" IsJumpToNewTab="True" ContentType="{x:Type local:ResourcesViewer}" />
 
 		<DockPanel Visibility="Hidden">
 			<StatusBar DockPanel.Dock="Bottom" Height="20" Background="Transparent">
 				<StatusBarItem Padding="0">
 					<Button Height="20" Padding="10 0" Style="{StaticResource ButtonAccentRevealStyle}">
-						<design:PackIcon Kind="TerminalLine"/>
+						<design:PackIcon Kind="TerminalLine" />
 					</Button>
 				</StatusBarItem>
 
 				<StatusBarItem Padding="0" HorizontalContentAlignment="Right">
 					<StackPanel Orientation="Horizontal">
 						<TextBlock>
-
 						</TextBlock>
 						<Button Style="{StaticResource ButtonRevealStyle}" Background="Transparent">
-							<design:PackIcon Kind="About" Margin="0"/>
+							<design:PackIcon Kind="About" Margin="0" />
 						</Button>
 					</StackPanel>
 				</StatusBarItem>
 			</StatusBar>
 
 			<Grid DockPanel.Dock="Bottom">
-				
 			</Grid>
 
 			<Grid Background="#E6FFFFFF" MaxWidth="350" Width="350" DockPanel.Dock="Right" HorizontalAlignment="Right">
-				
 			</Grid>
 		</DockPanel>
 	</Grid>

@@ -39,17 +39,17 @@
 			</StackPanel>
 
 			<Grid x:Name="ContentBar" DockPanel.Dock="Right" Background="#B3FFFFFF">
-				<DataGrid x:Name="ViewGrid" Background="Transparent" AutoGenerateColumns="False" 
+				<DataGrid x:Name="ViewGrid" Background="Transparent" AutoGenerateColumns="False"
 						  VirtualizingPanel.ScrollUnit="Pixel" IsReadOnly="True">
 					<DataGrid.CellStyle>
 						<Style TargetType="{x:Type DataGridCell}">
-							<Setter Property="Foreground" Value="Black"/>
+							<Setter Property="Foreground" Value="Black" />
 							<Setter Property="Template">
 								<Setter.Value>
 									<ControlTemplate TargetType="{x:Type DataGridCell}">
 										<Border Height="30" Padding="0 5" Background="Transparent"
 												BorderBrush="Transparent" BorderThickness="0">
-											<ContentPresenter VerticalAlignment="Center"/>
+											<ContentPresenter VerticalAlignment="Center" />
 										</Border>
 									</ControlTemplate>
 								</Setter.Value>
@@ -68,7 +68,7 @@
 						<DataGridTemplateColumn>
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate DataType="{x:Type local:ResourceContainer}">
-									<Image Source="{Binding ImageSource}" Stretch="None"/>
+									<Image Source="{Binding ImageSource}" Stretch="None" />
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
@@ -80,16 +80,16 @@
 
 					<DataGrid.RowStyle>
 						<Style TargetType="{x:Type DataGridRow}">
-							<Setter Property="Background" Value="Transparent"/>
-							<EventSetter Event="MouseDoubleClick" Handler="OnResourceSelected"/>
+							<Setter Property="Background" Value="Transparent" />
+							<EventSetter Event="MouseDoubleClick" Handler="OnResourceSelected" />
 							<Setter Property="ContextMenu">
 								<Setter.Value>
 									<ContextMenu Style="{StaticResource MenuStyle}" ItemContainerStyle="{StaticResource AcrylicMenuItemStyle}">
-										<MenuItem Header="打开" Click="OpenFile"/>
-										<MenuItem Header="移动" Click="MoveFile"/>
-										<MenuItem Header="复制" Click="CopyFile"/>
-										<MenuItem Header="删除" Click="DeleteFile"/>
-										<!--<Separator/>-->
+										<MenuItem Header="打开" Click="OpenFile" />
+										<MenuItem Header="移动" Click="MoveFile" />
+										<MenuItem Header="复制" Click="CopyFile" />
+										<MenuItem Header="删除" Click="DeleteFile" />
+										<!--<Separator />-->
 										<MenuItem Header="属性" />
 									</ContextMenu>
 								</Setter.Value>
@@ -97,16 +97,16 @@
 
 							<Style.Triggers>
 								<Trigger Property="IsSelected" Value="True">
-									<Setter Property="Background" Value="{StaticResource SelectedBackground}"/>
+									<Setter Property="Background" Value="{StaticResource SelectedBackground}" />
 								</Trigger>
 
 								<MultiTrigger>
 									<MultiTrigger.Conditions>
-										<Condition Property="IsSelected" Value="False"/>
-										<Condition Property="IsMouseOver" Value="True"/>
+										<Condition Property="IsSelected" Value="False" />
+										<Condition Property="IsMouseOver" Value="True" />
 									</MultiTrigger.Conditions>
 									<MultiTrigger.Setters>
-										<Setter Property="Background" Value="{StaticResource OnMouseMovedBackground}"/>
+										<Setter Property="Background" Value="{StaticResource OnMouseMovedBackground}" />
 									</MultiTrigger.Setters>
 								</MultiTrigger>
 							</Style.Triggers>

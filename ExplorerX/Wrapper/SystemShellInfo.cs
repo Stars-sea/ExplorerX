@@ -18,15 +18,15 @@ namespace ExplorerX.Wrapper {
 	/// (包装 SHGetFileInfo, DestroyIcon)
 	/// </summary>
 	public sealed class ShellInfoContainer : IDisposable {
+
 		private static readonly Dictionary<string, WeakReference<ShellInfoContainer>> Cache =
 			new Dictionary<string, WeakReference<ShellInfoContainer>>();
 
-
 		internal readonly SystemShellInfo.ShellInfo InnerInfo;
-		public	 readonly string PathOrExtension;
+		public   readonly string PathOrExtension;
 
-		private ImageSource?	source;
-		public	ImageSource		Source => source ??= GetIconSource();
+		private ImageSource?    source;
+		public ImageSource Source => source ??= GetIconSource();
 
 		private ShellInfoContainer(string path, bool largeIcon = false) {
 			InnerInfo = GetShellInfo(path, largeIcon, !Directory.Exists(PathOrExtension = path));
@@ -94,18 +94,18 @@ namespace ExplorerX.Wrapper {
 	/// (包装 ExtractIcon, DestroyIcon)
 	/// </summary>
 	public sealed class ExeIconContainer : IDisposable {
+
 		private static readonly Dictionary<(string, uint), WeakReference<ExeIconContainer>> Cache =
 			new Dictionary<(string, uint), WeakReference<ExeIconContainer>>();
 
 		private static readonly Regex SpiltRegex = new Regex(@"^@(?<path>.+?),\s*?(?<index>\d+)$");
 
-
 		public readonly string  ExePath;
 		public readonly uint    Index;
 		public readonly IntPtr  IconHandle;
 
-		private	ImageSource?	source;
-		public	ImageSource		Source => source ??= GetIconSource();
+		private ImageSource?    source;
+		public ImageSource Source => source ??= GetIconSource();
 
 		private ExeIconContainer(string exePath, uint index) {
 			IntPtr hIcon = SystemShellInfo.ExtractIcon(App.InstanceHandle, ExePath = exePath, Index = index);
@@ -128,7 +128,7 @@ namespace ExplorerX.Wrapper {
 		}
 
 		private ImageSource GetIconSource() {
-			ImageSource source = Imaging.CreateBitmapSourceFromHIcon(IconHandle, 
+			ImageSource source = Imaging.CreateBitmapSourceFromHIcon(IconHandle,
 				Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
 			if (source.CanFreeze) source.Freeze();

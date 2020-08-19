@@ -16,11 +16,11 @@ namespace ExplorerX {
 	/// ResourcesView.xaml 的交互逻辑
 	/// </summary>
 	public partial class ResourcesViewer : UserControl {
-
-		public	readonly FileSystemWatcher Watcher = new FileSystemWatcher();
+		public  readonly FileSystemWatcher Watcher = new FileSystemWatcher();
 
 		private DirectoryInfo? currentDir;
-		public  DirectoryInfo  CurrentDir { 
+
+		public DirectoryInfo CurrentDir {
 			get => currentDir ?? throw new NullReferenceException();
 			set {
 				if (!value.Exists)
@@ -29,20 +29,21 @@ namespace ExplorerX {
 				currentDir = value;
 				Reload();
 
-				Application.Current.MainWindow.Title	= CurrentDir.Name;
-				if (Parent is TabItem item) item.Header	= CurrentDir.FullName;
+				Application.Current.MainWindow.Title    = CurrentDir.Name;
+				if (Parent is TabItem item) item.Header = CurrentDir.FullName;
 				Watcher.Path = CurrentDir.FullName;
 				Watcher.EnableRaisingEvents = true;
 			}
 		}
 
-		public ResourcesViewer() { 
+		public ResourcesViewer() {
 			InitializeComponent();
 			Watcher.Renamed += FileSystemEventHandler;
 			Watcher.Created += FileSystemEventHandler;
 			Watcher.Deleted += FileSystemEventHandler;
 			Watcher.Changed += FileSystemEventHandler;
 		}
+
 		~ResourcesViewer() => Watcher.Dispose();
 
 		private void LoadShortcuts(object sender, RoutedEventArgs e) {
@@ -67,7 +68,7 @@ namespace ExplorerX {
 				select new LeftItem(drive);
 
 		private void OnResourceSelected(object sender, MouseButtonEventArgs e) {
-			if (e.ChangedButton != MouseButton.Left || 
+			if (e.ChangedButton != MouseButton.Left ||
 				ViewGrid.SelectedItems.Count < 1) return;
 
 			DirectoryInfo? dirInfo = null;
@@ -107,10 +108,12 @@ namespace ExplorerX {
 			catch (UnauthorizedAccessException e) { e.TraceError(); }
 		}
 
-		public IEnumerable<ResourceContainer>	GetSelectedItems() => ViewGrid.SelectedItems.OfType<ResourceContainer>();
-		public IEnumerable<FileSystemInfo>		GetSelectedInfos() => GetSelectedItems().Select(c => c.Info);
+		public IEnumerable<ResourceContainer> GetSelectedItems() => ViewGrid.SelectedItems.OfType<ResourceContainer>();
+
+		public IEnumerable<FileSystemInfo> GetSelectedInfos() => GetSelectedItems().Select(c => c.Info);
 
 		public Task<IEnumerable<ResourceContainer>> GetItemsAsync() => Task.Run(GetItems);
+
 		public IEnumerable<ResourceContainer> GetItems() => GetItemsExceptAttributes(CurrentDir, FileAttributes.Hidden);
 
 		public static IEnumerable<ResourceContainer> GetItems(DirectoryInfo dir)
@@ -123,28 +126,26 @@ namespace ExplorerX {
 			=> GetItems(dir, info => info.HasAttributes(attributes));
 
 		public static IEnumerable<ResourceContainer> GetItems(DirectoryInfo dir, Func<FileSystemInfo, bool> verification)
-			=> from		info in dir.GetFileSystemInfos().Where(verification)
-			   let		contiainer = ResourceContainer.Create(info)
-			   orderby	contiainer.Name
-			   orderby	contiainer.InfoType descending
-			   select	contiainer;
+			=> from info in dir.GetFileSystemInfos().Where(verification)
+			   let contiainer = ResourceContainer.Create(info)
+			   orderby contiainer.Name
+			   orderby contiainer.InfoType descending
+			   select contiainer;
 
 		// FileSystem event handler
-		private void FileSystemEventHandler(object sender, FileSystemEventArgs e) => Dispatcher.Invoke(Reload); 
+		private void FileSystemEventHandler(object sender, FileSystemEventArgs e) => Dispatcher.Invoke(Reload);
 
 		// ContextMenu Click
 		private void OpenFile(object sender, RoutedEventArgs e)
 			=> FileOperations.OpenFile(GetSelectedInfos().ToArray());
 
 		private void MoveFile(object sender, RoutedEventArgs e) {
-
 		}
+
 		private void CopyFile(object sender, RoutedEventArgs e) {
-
 		}
-		private void DeleteFile(object sender, RoutedEventArgs e) {
 
+		private void DeleteFile(object sender, RoutedEventArgs e) {
 		}
 	}
-
 }

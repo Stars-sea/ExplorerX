@@ -5,30 +5,27 @@
             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			xmlns:design="http://materialdesigninxaml.net/winfx/xaml/themes"
 			mc:Ignorable="d" d:DesignHeight="29" d:DesignWidth="250">
-	<ButtonBase.Style>
-		<Style TargetType="{x:Type ButtonBase}">
+	<ContentControl.Style>
+		<Style TargetType="{x:Type ContentControl}">
 			<Setter Property="Background" Value="Transparent" />
 			<Setter Property="Height" Value="29" />
 			<Setter Property="FontSize" Value="13" />
 		</Style>
-	</ButtonBase.Style>
+	</ContentControl.Style>
 
-	<ButtonBase.Template>
-		<ControlTemplate TargetType="{x:Type ButtonBase}">
-			<Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-					BorderThickness="{TemplateBinding BorderThickness}" MouseLeftButtonDown="OnMouseLeftButtonDown">
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="1*" />
-						<ColumnDefinition Width="15" />
-					</Grid.ColumnDefinitions>
+	<ContentControl.Template>
+		<ControlTemplate TargetType="{x:Type ContentControl}">
+			<Grid Background="{TemplateBinding Background}" MouseLeftButtonDown="OnMouseLeftButtonDown">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="1*" />
+					<ColumnDefinition Width="15" />
+				</Grid.ColumnDefinitions>
 
-					<Border Grid.Column="0" Padding="2 0">
-						<ContentPresenter VerticalAlignment="Center" />
-					</Border>
-					<design:PackIcon Kind="NavigateNext" Grid.Column="1" VerticalAlignment="Center" />
-				</Grid>
-			</Border>
+				<Border Grid.Column="0" Padding="2 0">
+					<ContentPresenter VerticalAlignment="Center" />
+				</Border>
+				<design:PackIcon Kind="NavigateNext" Grid.Column="1" VerticalAlignment="Center" />
+			</Grid>
 		</ControlTemplate>
-	</ButtonBase.Template>
+	</ContentControl.Template>
 </ButtonBase>

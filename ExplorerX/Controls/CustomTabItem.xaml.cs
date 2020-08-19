@@ -14,7 +14,6 @@ namespace ExplorerX.Controls {
 	/// CustomTabItem.xaml 的交互逻辑
 	/// </summary>
 	public partial class CustomTabItem : TabItem, ICustomAnimatable {
-
 		public Image Icon => (Image)Template.FindName("Icon", this);
 		protected TextBox InputPathBox => (TextBox)Template.FindName("InputPathBox", this);
 		protected ContentPresenter HeaderPresenter => (ContentPresenter)Template.FindName("Presenter", this);
@@ -30,8 +29,6 @@ namespace ExplorerX.Controls {
 		}
 
 		protected TabControl ParentTC => (TabControl)Parent;
-
-		private EllipseGeometry EffectEllipse => (EllipseGeometry)Template.FindName("EffectEllipse", this);
 
 		public CustomTabItem() : this("NewTab") { }
 
@@ -60,21 +57,6 @@ namespace ExplorerX.Controls {
 			}
 		}
 
-		protected override async void OnSelected(RoutedEventArgs e) {
-			base.OnSelected(e);
-			if (EffectEllipse is null) return;
-
-			EffectEllipse.Center = Mouse.GetPosition(this);
-			await EffectEllipse.BeginDoubleAnimationAsync(EllipseGeometry.RadiusXProperty, from: 0, ParentTC.ActualWidth);
-			EffectEllipse.BeginDoubleAnimation(EllipseGeometry.RadiusXProperty, 0, sec: 0);
-			if (IsSelected) Background = (Brush)FindResource("SelectedBackground");
-		}
-
-		protected override void OnUnselected(RoutedEventArgs e) {
-			base.OnUnselected(e);
-			Background = (Brush)FindResource("UnselectedBackground");
-		}
-
 		protected virtual void OnLoaded(object sender, RoutedEventArgs e) {
 			e.Handled = true;
 			if (IsSelected) OnSelected(e);
@@ -82,7 +64,9 @@ namespace ExplorerX.Controls {
 
 		protected virtual void OnUnloaded(object sender, RoutedEventArgs e) => Close();
 
-		public virtual void Close() { if (ParentTC != null) ParentTC.Items.Remove(this); }
+		public virtual void Close() {
+			if (ParentTC != null) ParentTC.Items.Remove(this);
+		}
 
 		private void OnMouseDown(object sender, MouseButtonEventArgs e) {
 			if (e.MiddleButton == MouseButtonState.Pressed) Close();
@@ -98,14 +82,16 @@ namespace ExplorerX.Controls {
 		/// </summary>
 		private void Jump() {
 			if (Content is ResourcesViewer viewer) {
-				HeaderPresenter.Visibility	= Visibility.Visible;
-				InputPathBox.Visibility		= Visibility.Collapsed;
+				HeaderPresenter.Visibility  = Visibility.Visible;
+				InputPathBox.Visibility     = Visibility.Collapsed;
 				viewer.CurrentDir = new DirectoryInfo(InputPathBox.Text);
 			}
 		}
 
 		private void InputPathBox_LostFocus(object sender, RoutedEventArgs e) => Jump();
 
-		private void InputPathBox_KeyDown(object sender, KeyEventArgs e) { if (e.Key == Key.Enter) Jump(); }
+		private void InputPathBox_KeyDown(object sender, KeyEventArgs e) {
+			if (e.Key == Key.Enter) Jump();
+		}
 	}
 }

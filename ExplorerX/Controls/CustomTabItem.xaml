@@ -12,51 +12,48 @@
 			<Setter Property="Background" Value="{StaticResource UnselectedBackground}" />
 			<Setter Property="Padding" Value="0 0 5 0" />
 			<Setter Property="MinHeight" Value="{StaticResource TitleBarHeight}" />
+
+			<Style.Triggers>
+				<Trigger Property="IsSelected" Value="True">
+					<Setter Property="Background" Value="{StaticResource SelectedBackground}" />
+				</Trigger>
+			</Style.Triggers>
 		</Style>
 	</TabItem.Style>
 	<TabItem.Template>
 		<ControlTemplate TargetType="{x:Type TabItem}">
-			<Border x:Name="HeaderBorder" Background="{TemplateBinding Background}" ClipToBounds="True" MouseDown="OnMouseDown"
-					BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-				<Grid>
-					<Path Fill="{StaticResource SelectedBackground}" Opacity="0.9">
-						<Path.Data>
-							<EllipseGeometry x:Name="EffectEllipse" RadiusX="0"
-											 RadiusY="{Binding RadiusX, RelativeSource={RelativeSource Mode=Self}}" />
-						</Path.Data>
-					</Path>
+			<design:Ripple x:Name="HeaderBorder" MouseDown="OnMouseDown"
+						   RecognizesAccessKey="{TemplateBinding IsSelected}" Style="{StaticResource RippleStyle}">
+				<Grid Background="{TemplateBinding Background}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="30" />
+						<ColumnDefinition Width="1*" />
+						<ColumnDefinition Width="30" />
+					</Grid.ColumnDefinitions>
 
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="30" />
-							<ColumnDefinition Width="1*" />
-							<ColumnDefinition Width="30" />
-						</Grid.ColumnDefinitions>
+					<Image x:Name="Icon" Stretch="None" />
+					<ContentPresenter x:Name="Presenter" Grid.Column="1" Margin="{TemplateBinding Padding}"
+									  ContentSource="Header" VerticalAlignment="Center" />
+					<TextBox x:Name="InputPathBox" Grid.Column="1" Visibility="Collapsed" Background="Transparent"
+							 VerticalContentAlignment="Center" LostFocus="InputPathBox_LostFocus"
+							 ScrollViewer.HorizontalScrollBarVisibility="Hidden" KeyDown="InputPathBox_KeyDown"
+							 ScrollViewer.VerticalScrollBarVisibility="Hidden" FontSize="13">
+						<TextBox.Template>
+							<ControlTemplate TargetType="{x:Type TextBox}">
+								<Border Background="#33FFFFFF">
+									<ScrollViewer x:Name="PART_ContentHost" />
+								</Border>
+							</ControlTemplate>
+						</TextBox.Template>
+					</TextBox>
 
-						<Image x:Name="Icon" Stretch="None" />
-						<ContentPresenter x:Name="Presenter" Grid.Column="1" Margin="{TemplateBinding Padding}" 
-										  ContentSource="Header" VerticalAlignment="Center"/>
-						<TextBox x:Name="InputPathBox" Grid.Column="1" Visibility="Collapsed" Background="Transparent"
-								 VerticalContentAlignment="Center" LostFocus="InputPathBox_LostFocus"
-								 ScrollViewer.HorizontalScrollBarVisibility="Hidden" KeyDown="InputPathBox_KeyDown"
-								 ScrollViewer.VerticalScrollBarVisibility="Hidden" FontSize="13">
-							<TextBox.Template>
-								<ControlTemplate TargetType="{x:Type TextBox}">
-									<Border Background="#33FFFFFF">
-										<ScrollViewer x:Name="PART_ContentHost"/>
-									</Border>
-								</ControlTemplate>
-							</TextBox.Template>
-						</TextBox>
-
-						<Button x:Name="CloseButton" Grid.Column="2" Background="Transparent" Click="OnUnloaded"
-								Width="20" Height="20" Style="{StaticResource ButtonRevealStyle}"
-								Foreground="{TemplateBinding Foreground}">
-							<design:PackIcon Kind="Close" />
-						</Button>
-					</Grid>
+					<Button x:Name="CloseButton" Grid.Column="2" Background="Transparent" Click="OnUnloaded"
+							Width="20" Height="20" Style="{StaticResource ButtonRevealStyle}"
+							Foreground="{TemplateBinding Foreground}">
+						<design:PackIcon Kind="Close" />
+					</Button>
 				</Grid>
-			</Border>
+			</design:Ripple>
 
 			<ControlTemplate.Triggers>
 				<Trigger Property="IsSelected" Value="False">

@@ -10,6 +10,7 @@ using System.Windows.Media.Animation;
 namespace ExplorerX.Helpers {
 
 	public static class DependencyObjectHelper {
+
 		public static T? FindParent<T>(this DependencyObject @object, uint depth) where T : DependencyObject {
 			DependencyObject backup = @object;
 			uint currentDepth = 0;
