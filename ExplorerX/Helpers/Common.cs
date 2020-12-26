@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace ExplorerX.Helpers {
 
@@ -34,12 +30,6 @@ namespace ExplorerX.Helpers {
 				return new DirectoryInfo(path);
 			throw new FileNotFoundException($"Not found file/directory {path}");
 		}
-	}
-
-	public static class ImageHelper {
-
-		public static ImageSource ToImageSource(this IntPtr hIcon)
-			=> Imaging.CreateBitmapSourceFromHIcon(hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 	}
 
 	public static class TraceHelper {
