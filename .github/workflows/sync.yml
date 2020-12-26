@@ -25,6 +25,6 @@ jobs:
       
       - name: Sync
         run: |
-          git checkout -d main
           git remote add origin-azure https://stars-sea@dev.azure.com/stars-sea/ExplorerX/_git/ExplorerX
+          git checkout -d main
           git push -u origin-azure main
