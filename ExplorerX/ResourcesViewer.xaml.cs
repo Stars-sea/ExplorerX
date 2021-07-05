@@ -56,7 +56,8 @@ namespace ExplorerX {
 				Environment.SpecialFolder.MyMusic.GetPath(),
 				Environment.SpecialFolder.MyVideos.GetPath(),
 				Environment.GetEnvironmentVariable("OneDriveConsumer")
-			}.Where(p => p != null && Directory.Exists(p)).Select(p => new DirectoryInfo(p));
+			}.Where(p => p != null && Directory.Exists(p))
+			 .Select(p => new DirectoryInfo(p ?? throw new NullReferenceException()));
 
 			ShortcutsBox.ItemsSource = infos.Select(info => new LeftItem(info));
 		}

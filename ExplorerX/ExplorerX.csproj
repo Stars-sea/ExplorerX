@@ -9,7 +9,7 @@
 
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
-		<ApplicationIcon>Assets\Icons\icon32_normal.ico</ApplicationIcon>
+		<ApplicationIcon>Assets\Icons\icon256_normal.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
