@@ -6,15 +6,20 @@ using System.Threading.Tasks;
 using PathHelper = System.IO.Path;
 
 namespace ExplorerX.FileManager {
+
 	public class LocalDirectoryInfo : LocalSystemInfo {
+
 		#region Properties
+
 		public LocalSystemInfo[] Children =>
 			Directory.EnumerateFileSystemEntries(Path).Select(GetInstance).ToArray();
 
 		public override DirectoryInfo InnerInfo => new(Path);
-		#endregion
 
-		public LocalDirectoryInfo(Uri uri) : base(uri) { }
+		#endregion Properties
+
+		public LocalDirectoryInfo(Uri uri) : base(uri) {
+		}
 
 		public override CreateResponse Create() {
 			if (base.Exists)
@@ -34,12 +39,14 @@ namespace ExplorerX.FileManager {
 		}
 
 		#region Override Method
+
 		protected async override Task<FileSize> GetSizeAsync() {
 			FileSize size = new(0);
 			foreach (LocalSystemInfo child in Children)
 				size += await child.Size;
 			return size;
 		}
-		#endregion
+
+		#endregion Override Method
 	}
 }

@@ -3,25 +3,18 @@ using ExplorerX.Controls.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ExplorerX.Controls {
+
 	/// <summary>
 	/// Uri 地址容器
 	/// </summary>
 	public class UriContainer : ItemsControl {
+
 		#region Static Members
+
 		public static readonly Uri IndexUri = new("explorerx://Index");
 
 		private static readonly RegisterHelper register = new(typeof(UriContainer));
@@ -41,16 +34,20 @@ namespace ExplorerX.Controls {
 
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(UriContainer), new FrameworkPropertyMetadata(typeof(UriContainer)));
 		}
-		#endregion
+
+		#endregion Static Members
 
 		#region Property
+
 		public Uri Uri {
 			get => (Uri) GetValue(UriProperty);
 			set => SetValue(UriProperty, value);
 		}
-		#endregion
+
+		#endregion Property
 
 		#region Events
+
 		public event ChangedPropertyEventHandler<Uri> ChangedUri {
 			add => AddHandler(ChangedUriEvent, value);
 			remove => RemoveHandler(ChangedUriEvent, value);
@@ -65,9 +62,11 @@ namespace ExplorerX.Controls {
 			add => AddHandler(RemovedChildUriEvent, value);
 			remove => RemoveHandler(RemovedChildUriEvent, value);
 		}
-		#endregion
+
+		#endregion Events
 
 		#region Event Handlers
+
 		public UriContainer() {
 			AddedChildUri   += OnAddedChildUri;
 			RemovedChildUri += OnRemovedChildUri;
@@ -78,7 +77,7 @@ namespace ExplorerX.Controls {
 			Uri          oldValue  = (Uri) args.OldValue;
 			Uri          newValue  = (Uri) args.NewValue;
 			container.RaiseEvent(new ChangedPropertyEventArgs<Uri>(ChangedUriEvent, oldValue, newValue));
-			
+
 			// Call AddedChildUriEvent / RemovedChildUriEvent
 			var diffierences = oldValue.Segments.Except(newValue.Segments);
 			if (diffierences is null || !diffierences.Any()) return;
@@ -104,17 +103,17 @@ namespace ExplorerX.Controls {
 		}
 
 		private void OnAddedChildUri(object sender, ChangedItemEventArgs<Uri> args) {
-			
 		}
 
 		private void OnRemovedChildUri(object sender, ChangedItemEventArgs<Uri> args) {
-
 		}
 
-		#endregion
+		#endregion Event Handlers
 
 		#region Items Operations
+
 		public Uri Append(Uri child) => Uri = new(Uri, child);
-		#endregion
+
+		#endregion Items Operations
 	}
 }

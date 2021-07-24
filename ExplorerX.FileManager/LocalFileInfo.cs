@@ -1,44 +1,52 @@
-﻿using Vanara.PInvoke;
-using System;
+﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Media;
-
+using Vanara.PInvoke;
 using PathHelper = System.IO.Path;
 using SafeHICON  = Vanara.PInvoke.User32.SafeHICON;
-using System.Threading.Tasks;
 
 namespace ExplorerX.FileManager {
+
 	public class LocalFileInfo : LocalSystemInfo {
+
 		#region Private Fields
+
 		private static readonly WeakDict<string, ImageSource> SmallIconDict = new();
 		private static readonly WeakDict<string, ImageSource> LargeIconDict = new();
-		#endregion
+
+		#endregion Private Fields
 
 		#region Properties
-		public override bool Exists		   => File.Exists(Path);
 
-		public string?		 Extension	   => PathHelper.GetExtension(Path);
+		public override bool Exists => File.Exists(Path);
 
-		public BinaryType	 BinaryType	   => BinaryTypeHelper.GetBinaryType(Path);
-		public bool			 IsExecutable  => BinaryType.IsExecutable();
+		public string? Extension => PathHelper.GetExtension(Path);
+
+		public BinaryType BinaryType => BinaryTypeHelper.GetBinaryType(Path);
+		public bool IsExecutable => BinaryType.IsExecutable();
 
 		public override FileInfo InnerInfo => new(Path);
-		#endregion
 
-		public LocalFileInfo(Uri uri) : base(uri) { }
+		#endregion Properties
+
+		public LocalFileInfo(Uri uri) : base(uri) {
+		}
 
 		#region Override methods
+
 		public override CreateResponse Create() {
 			if (base.Exists)
 				return new CreateResponse(false, null, new IOException(
 					$"A directory/file has had the same name with the file. ({Path})"));
-			
+
 			if (!PathHelper.IsPathRooted(Path))
 				return new CreateResponse(false, null, new IOException($"'{Path}' isn't a absolute path."));
 
 			try {
 				return new CreateResponse(true, File.Create(Path), null);
-			} catch (Exception error) {
+			}
+			catch (Exception error) {
 				return new CreateResponse(false, null, error);
 			}
 		}
@@ -65,34 +73,29 @@ namespace ExplorerX.FileManager {
 		protected override ImageSource GetSmallIcon() {
 			string pathOrExtension = IsExecutable ? Path : PathHelper.GetExtension(Path);
 
-			if (SmallIconDict.ContainsKey(pathOrExtension) && 
+			if (SmallIconDict.ContainsKey(pathOrExtension) &&
 				SmallIconDict.TryGetValue(pathOrExtension, out ImageSource? source))
 				return source;
 			else SmallIconDict.Clean();
 
-			if (IsExecutable) {
-				GetExecutableFileIcons(out ImageSource small, out _);
-				return small;
-			}
-
-			return SmallIconDict[pathOrExtension] = base.GetSmallIcon();
+			return IsExecutable && GetExecutableFileIcons(out ImageSource small, out _) != uint.MaxValue
+				? (SmallIconDict[pathOrExtension] = small)
+				: (SmallIconDict[pathOrExtension] = base.GetSmallIcon());
 		}
 
 		protected override ImageSource GetLargeIcon() {
 			string pathOrExtension = IsExecutable ? Path : PathHelper.GetExtension(Path);
 
-			if (LargeIconDict.ContainsKey(pathOrExtension) && 
+			if (LargeIconDict.ContainsKey(pathOrExtension) &&
 				LargeIconDict.TryGetValue(pathOrExtension, out ImageSource? source))
 				return source;
 			else LargeIconDict.Clean();
 
-			if (IsExecutable) {
-				GetExecutableFileIcons(out _, out ImageSource large);
-				return large;
-			}
-
-			return LargeIconDict[pathOrExtension] = base.GetLargeIcon();
+			return IsExecutable && GetExecutableFileIcons(out _, out ImageSource large) != uint.MaxValue
+				? (LargeIconDict[pathOrExtension] = large)
+				: (LargeIconDict[pathOrExtension] = base.GetLargeIcon());
 		}
-		#endregion
+
+		#endregion Override methods
 	}
 }

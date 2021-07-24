@@ -1,14 +1,14 @@
 <ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ExplorerX.Controls"
-	xmlns:sys="clr-namespace:System;assembly=System.Runtime"
-	xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF" >
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:ExplorerX.Controls"
+	xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+	xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Controls.xaml" />
 	</ResourceDictionary.MergedDictionaries>
-	
+
 	<!--#region ElasticTabControl Style-->
 	<Style TargetType="{x:Type local:ElasticTabControl}">
 		<Setter Property="Background" Value="Transparent" />
@@ -135,8 +135,8 @@
 		<Setter Property="ItemTemplate">
 			<Setter.Value>
 				<DataTemplate DataType="{x:Type sys:Uri}">
-					<StackPanel Orientation="Horizontal" >
-						<Button Content="{Binding Path=Authority}"/>
+					<StackPanel Orientation="Horizontal">
+						<Button Content="{Binding Path=Authority}" />
 					</StackPanel>
 				</DataTemplate>
 			</Setter.Value>

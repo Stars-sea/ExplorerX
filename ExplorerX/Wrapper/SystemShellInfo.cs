@@ -49,7 +49,7 @@ namespace ExplorerX.Wrapper {
 				flag = largeIcon ? SystemShellInfo.FileLargeIconFlags : SystemShellInfo.FileIconFlags;
 			else flag = largeIcon ? SystemShellInfo.DirLargeIconFlags : SystemShellInfo.DirIconFlags;
 
-			if (SystemShellInfo.SHGetFileInfo(path, (uint)(isFile ? 256 : 0), out SystemShellInfo.ShellInfo info,
+			if (SystemShellInfo.SHGetFileInfo(path, (uint) (isFile ? 256 : 0), out SystemShellInfo.ShellInfo info,
 					SystemShellInfo.ShellInfo.Size, flag) != IntPtr.Zero && info.hIcon != IntPtr.Zero) {
 				return info;
 			}
@@ -75,7 +75,7 @@ namespace ExplorerX.Wrapper {
 				Trace.Fail($"[{DateTime.Now:g}] Get file/directory icon {PathOrExtension} error.");
 				Trace.WriteLine($"[{DateTime.Now:g}] Program will use the default icon.");
 
-				return (ExeIconContainer)$"@{Environment.SpecialFolder.Windows.GetPath()}\\System32\\SHELL32.dll,0";
+				return (ExeIconContainer) $"@{Environment.SpecialFolder.Windows.GetPath()}\\System32\\SHELL32.dll,0";
 			}
 		}
 

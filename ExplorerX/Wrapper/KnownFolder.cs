@@ -18,7 +18,8 @@ namespace ExplorerX.Wrapper {
 
 		public KnownFolder(Guid guid) => FolderGuid = guid;
 
-		public KnownFolder(string guid) : this(new Guid(guid)) { }
+		public KnownFolder(string guid) : this(new Guid(guid)) {
+		}
 
 		/// <summary>
 		/// 取得文件夹路径

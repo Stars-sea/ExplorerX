@@ -1,16 +1,18 @@
-﻿using Vanara.PInvoke;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Windows.Media;
-
-using SHGFI		 = Vanara.PInvoke.Shell32.SHGFI;
-using SHFILEINFO = Vanara.PInvoke.Shell32.SHFILEINFO;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using Vanara.PInvoke;
+using SHFILEINFO = Vanara.PInvoke.Shell32.SHFILEINFO;
+using SHGFI = Vanara.PInvoke.Shell32.SHGFI;
 
 namespace ExplorerX.FileManager {
+
 	public abstract class LocalSystemInfo {
+
 		#region Private fields
+
 		private string? actuallyName;
 		private string? displayName;
 		private string? typeName;
@@ -20,15 +22,17 @@ namespace ExplorerX.FileManager {
 
 		private Task<FileSize>? size;
 		//private FileSystemWatcher? watcher;
-		#endregion
+
+		#endregion Private fields
 
 		#region Properties
+
 		public Uri Uri { get; init; }
 		public string Path => Uri.LocalPath;
 
 		public string ActuallyName => actuallyName  ??= GetActuallyName();
-		public string DispalyName  => displayName   ??= GetDisplayName();
-		public string TypeName     => typeName      ??= GetTypeName();
+		public string DispalyName => displayName   ??= GetDisplayName();
+		public string TypeName => typeName      ??= GetTypeName();
 
 		public Task<FileSize> Size => size ??= GetSizeAsync();
 
@@ -38,11 +42,12 @@ namespace ExplorerX.FileManager {
 		public virtual FileAttributes Attributes => File.GetAttributes(Path);
 
 		public virtual DateTime LastAccessTime => File.GetLastAccessTime(Path);
-		public virtual DateTime LastWriteTime  => File.GetLastWriteTime(Path);
+		public virtual DateTime LastWriteTime => File.GetLastWriteTime(Path);
 
 		public virtual bool Exists => File.Exists(Path) || Directory.Exists(Path);
 		public abstract FileSystemInfo InnerInfo { get; }
-		#endregion
+
+		#endregion Properties
 
 		protected LocalSystemInfo(Uri uri) {
 			if (uri.Scheme != Uri.UriSchemeFile)
@@ -88,6 +93,7 @@ namespace ExplorerX.FileManager {
 		}
 
 		#region Property implementations
+
 		protected virtual string GetActuallyName() => Uri.Segments.Last();
 
 		internal IntPtr TryGetInfo(SHGFI flags, out SHFILEINFO info) {
@@ -115,7 +121,7 @@ namespace ExplorerX.FileManager {
 		private ImageSource GetIcon(SHGFI flags) {
 			Check(TryGetInfo(flags, out SHFILEINFO info),
 				  $"Can't get icon handle of file {Path}.");
-			HICON		icon    = info.hIcon;
+			HICON       icon    = info.hIcon;
 			ImageSource source  = icon.ToBitmapSource();
 
 			User32.DestroyIcon(icon);
@@ -125,6 +131,7 @@ namespace ExplorerX.FileManager {
 		protected virtual ImageSource GetSmallIcon() => GetIcon(SHGFI.SHGFI_ICON | SHGFI.SHGFI_SMALLICON);
 
 		protected virtual ImageSource GetLargeIcon() => GetIcon(SHGFI.SHGFI_ICON | SHGFI.SHGFI_LARGEICON);
-		#endregion
+
+		#endregion Property implementations
 	}
 }

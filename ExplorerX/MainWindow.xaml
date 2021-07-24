@@ -7,7 +7,7 @@
 	xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
 	xmlns:controls="clr-namespace:ExplorerX.Controls;assembly=ExplorerX.Controls"
 	mc:Ignorable="d" fw:AcrylicWindow.Enabled="True" fw:AcrylicWindow.AcrylicWindowStyle="NoIcon"
-	Title="ExplorerX" Height="650" Width="1200" MinHeight="300" MinWidth="540" >
+	Title="ExplorerX" Height="650" Width="1200" MinHeight="300" MinWidth="540">
 
 	<controls:ElasticTabControl x:Name="RootTabControl" AddedItem="OnItemAdded" />
 </Window>

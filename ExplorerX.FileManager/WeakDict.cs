@@ -7,8 +7,7 @@ using System.Linq;
 namespace ExplorerX.FileManager {
 
 	public class WeakDict<TKey, TValue> : IDictionary<TKey, TValue>
-		where TKey: notnull where TValue: class
-	{
+		where TKey : notnull where TValue : class {
 		protected Dictionary<TKey, WeakReference<TValue>> InnerDict = new();
 
 		public TValue this[TKey key] {
@@ -24,17 +23,15 @@ namespace ExplorerX.FileManager {
 
 		public ICollection<TValue> Values =>
 			new List<TValue>(
-				from   reference in InnerDict.Values
-				let    value = Unpack(reference)
-				where  value is not null
+				from reference in InnerDict.Values
+				let value = Unpack(reference)
+				where value is not null
 				select value
 			);
-			
 
 		public int Count => InnerDict.Count;
 
 		public bool IsReadOnly => false;
-
 
 		private static TValue? Unpack(WeakReference<TValue> reference) {
 			if (reference.TryGetTarget(out TValue? value))
@@ -42,8 +39,8 @@ namespace ExplorerX.FileManager {
 			return null;
 		}
 
-
 		public void Add(TKey key, TValue value) => InnerDict.Add(key, new WeakReference<TValue>(value));
+
 		public void Add(KeyValuePair<TKey, TValue> item) => Add(item.Key, item.Value);
 
 		public void Clear() => InnerDict.Clear();
@@ -62,6 +59,7 @@ namespace ExplorerX.FileManager {
 		}
 
 		public bool Contains(KeyValuePair<TKey, TValue> item) => ContainsKey(item.Key);
+
 		public bool ContainsKey(TKey key) => InnerDict.ContainsKey(key);
 
 		// TODO
@@ -75,6 +73,7 @@ namespace ExplorerX.FileManager {
 		}
 
 		public bool Remove(TKey key) => InnerDict.Remove(key);
+
 		public bool Remove(KeyValuePair<TKey, TValue> item) => Remove(item.Key);
 
 		public bool TryGetValue(TKey key, [NotNullWhen(true)][MaybeNullWhen(false)] out TValue value) {

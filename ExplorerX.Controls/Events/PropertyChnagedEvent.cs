@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 
 namespace ExplorerX.Controls.Events {
+
 	public delegate void ChangedPropertyEventHandler<T>(object sender, ChangedPropertyEventArgs<T> args);
 
 	public class ChangedPropertyEventArgs<T> : RoutedEventArgs {

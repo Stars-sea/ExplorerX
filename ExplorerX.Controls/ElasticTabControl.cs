@@ -12,13 +12,16 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media.Animation;
 
 namespace ExplorerX.Controls {
+
 	/// <summary>
 	/// 弹性 TabControl
 	/// </summary>
 	[TemplatePart(Name = "PART_HeadersHost", Type = typeof(Panel))]
 	[TemplatePart(Name = "PART_NewTabButton", Type = typeof(ButtonBase))]
 	public class ElasticTabControl : TabControl {
+
 		#region Static Members
+
 		private static readonly RegisterHelper register = new(typeof(ElasticTabControl));
 
 		private static readonly DependencyPropertyKey CanNewTabPropertyKey;
@@ -41,9 +44,11 @@ namespace ExplorerX.Controls {
 
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(ElasticTabControl), new FrameworkPropertyMetadata(typeof(ElasticTabControl)));
 		}
-		#endregion
+
+		#endregion Static Members
 
 		#region Properties
+
 		public Func<ElasticTabControl, bool> CanAddChild {
 			get => (Func<ElasticTabControl, bool>) GetValue(CanAddChildProperty);
 			set => SetValue(CanAddChildProperty, value);
@@ -64,9 +69,11 @@ namespace ExplorerX.Controls {
 		/// 储存等待鼠标离开任务, 避免关闭多个 ElasticTabItem 时创建过多任务
 		/// </summary>
 		private Task? waitForMouseLeavingTask;
-		#endregion
+
+		#endregion Properties
 
 		#region Events
+
 		public event ChangedItemEventHandler<ElasticTabItem> AddedItem {
 			add => AddHandler(AddedItemEvent, value);
 			remove => RemoveHandler(AddedItemEvent, value);
@@ -76,9 +83,11 @@ namespace ExplorerX.Controls {
 			add => AddHandler(RemovedItemEvent, value);
 			remove => RemoveHandler(RemovedItemEvent, value);
 		}
-		#endregion
+
+		#endregion Events
 
 		#region Event Handlers
+
 		public ElasticTabControl() {
 			Loaded += OnLoaded;
 		}
@@ -112,9 +121,11 @@ namespace ExplorerX.Controls {
 					RaiseEvent(new ChangedItemEventArgs<ElasticTabItem>(@event, item));
 			}
 		}
-		#endregion
+
+		#endregion Event Handlers
 
 		#region Item Operations
+
 		public void ResizeItems(double averageWidth) {
 			foreach (ElasticTabItem item in Items.OfType<ElasticTabItem>()) {
 				item.BeginDoubleAnimation(WidthProperty, averageWidth, func: HeadersAnimationFunc);
@@ -162,6 +173,7 @@ namespace ExplorerX.Controls {
 
 			throw new InvalidOperationException("Can't new tab.");
 		}
-		#endregion
+
+		#endregion Item Operations
 	}
 }

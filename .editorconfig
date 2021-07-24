@@ -8,3 +8,6 @@ dotnet_diagnostic.IDE0055.severity = silent
 
 # IDE0058: 永远不会使用表达式值
 csharp_style_unused_value_expression_statement_preference = unused_local_variable
+
+# IDE0024: 使用运算符的程序块主体
+csharp_style_expression_bodied_operators = when_on_single_line

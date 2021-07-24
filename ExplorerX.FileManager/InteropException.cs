@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace ExplorerX.FileManager {
+
 	public class InteropException : Exception {
 		public int ErrorCode { get; init; }
 

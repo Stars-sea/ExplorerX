@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows;
 
 namespace ExplorerX.Controls.Helpers {
+
 	internal sealed class RegisterHelper {
 		public Type OwnerType { get; init; }
 
@@ -11,10 +12,10 @@ namespace ExplorerX.Controls.Helpers {
 		}
 
 		#region Property Register
+
 		private PropertyInfo GetProperty(string propertyName)
 			=> OwnerType.GetProperty(propertyName) ?? throw new NullReferenceException();
 
-		
 		public DependencyProperty Register(string propertyName)
 			=> Register(GetProperty(propertyName));
 
@@ -38,14 +39,17 @@ namespace ExplorerX.Controls.Helpers {
 
 		public DependencyPropertyKey RegisterReadOnly(PropertyInfo info, PropertyMetadata metadata)
 			=> DependencyProperty.RegisterReadOnly(info.Name, info.PropertyType, OwnerType, metadata);
-		#endregion
+
+		#endregion Property Register
 
 		#region Event Register
+
 		public RoutedEvent RegisterRoutedEvent(string eventName, RoutingStrategy strategy)
 			=> RegisterRoutedEvent(OwnerType.GetEvent(eventName) ?? throw new NullReferenceException(), strategy);
 
 		public RoutedEvent RegisterRoutedEvent(EventInfo info, RoutingStrategy strategy)
 			=> EventManager.RegisterRoutedEvent(info.Name, strategy, info.EventHandlerType, OwnerType);
-		#endregion
+
+		#endregion Event Register
 	}
 }

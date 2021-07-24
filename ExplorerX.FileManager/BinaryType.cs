@@ -1,13 +1,9 @@
 ﻿using Vanara.PInvoke;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using SCS = Vanara.PInvoke.Kernel32.SCS;
 
 namespace ExplorerX.FileManager {
+
 	public enum BinaryType : uint {
 		Win32 = 0,      // SCS_32BIT_BINARY
 		Win64 = 6,      // SCS_64BIT_BINARY
@@ -22,6 +18,7 @@ namespace ExplorerX.FileManager {
 	}
 
 	public static class BinaryTypeHelper {
+
 		public static BinaryType GetBinaryType(string path) {
 			if (Kernel32.GetBinaryType(path, out SCS type)) {
 				if (path.EndsWith(".dll"))
