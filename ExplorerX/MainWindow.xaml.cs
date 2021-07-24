@@ -1,8 +1,8 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
+﻿using ExplorerX.Controls;
+using ExplorerX.Controls.Events;
+using System;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ExplorerX {
 
@@ -12,28 +12,13 @@ namespace ExplorerX {
 	public partial class MainWindow : Window {
 
 		public MainWindow() {
-			Task.WaitAll(new[] { InitCongifureAsync() }, 2000);
 			InitializeComponent();
 		}
 
-		private Task InitCongifureAsync() => Task.Run(InitCongifure);
-
-		private void InitCongifure() {
-			Trace.Listeners.Add(GetTextWriterTraceListener());
-			Trace.AutoFlush = true;
-			Trace.IndentSize = 4;
-			Trace.UseGlobalLock = true;
-		}
-
-		private static TextWriterTraceListener GetTextWriterTraceListener() {
-			string fileName = $"Logs\\{DateTime.Now:g}";
-			int triedTimes  = 0;
-			while (true) {
-				string fullName = $"{fileName} ({triedTimes}).log";
-				if (!File.Exists(fullName))
-					return new TextWriterTraceListener(fullName);
-			}
-			throw new FileNotFoundException();
+		private void OnItemAdded(object sender, ChangedItemEventArgs<ElasticTabItem> args) {
+			args.Item.Content ??= new Frame {
+				Source = new Uri("/Pages/FilesViewer.xaml", UriKind.Relative)
+			};
 		}
 	}
 }

@@ -5,6 +5,7 @@
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<Authors>Stars sea</Authors>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -12,29 +13,22 @@
 		<ApplicationIcon>Assets\Icons\icon256_normal.ico</ApplicationIcon>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
 	<ItemGroup>
-		<Compile Remove="FileSystemAccess\**" />
-		<EmbeddedResource Remove="FileSystemAccess\**" />
-		<None Remove="FileSystemAccess\**" />
-		<Page Remove="FileSystemAccess\**" />
+	  <None Include="..\.editorconfig" Link=".editorconfig" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<COMReference Include="Shell32.dll">
-			<Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
-			<VersionMajor>1</VersionMajor>
-			<VersionMinor>0</VersionMinor>
-			<Lcid>0</Lcid>
-			<WrapperTool>tlbimp</WrapperTool>
-			<Isolated>false</Isolated>
-		</COMReference>
+		<PackageReference Include="FluentSystemIconsForWPF" Version="1.0.1" />
+		<PackageReference Include="FluentWPF" Version="0.9.0" />
+		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentWPF" Version="0.8.0" />
-		<PackageReference Include="MaterialDesignColors" Version="1.2.5" />
-		<PackageReference Include="MaterialDesignThemes.Wpf" Version="1.0.1" />
-		<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+	  <ProjectReference Include="..\ExplorerX.Controls\ExplorerX.Controls.csproj" />
 	</ItemGroup>
 
 </Project>

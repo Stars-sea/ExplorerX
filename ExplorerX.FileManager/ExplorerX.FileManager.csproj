@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net5.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<Authors>Stars sea</Authors>
+	<Description>基于 Native 的文件管理类库</Description>
+	<Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	<DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Vanara.PInvoke.Kernel32" Version="3.3.10" />
+	<PackageReference Include="Vanara.PInvoke.Shell32" Version="3.3.10" />
+	<PackageReference Include="Vanara.PInvoke.User32" Version="3.3.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Reference Include="PresentationCore">
+	  <HintPath>C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\5.0.0\ref\net5.0\PresentationCore.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+</Project>

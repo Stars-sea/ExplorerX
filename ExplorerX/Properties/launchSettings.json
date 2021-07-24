@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ExplorerX": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false
+    }
+  }
+}
