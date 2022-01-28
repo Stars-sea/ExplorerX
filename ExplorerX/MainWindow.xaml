@@ -1,13 +1,13 @@
 ﻿<Window
-	x:Class="ExplorerX.MainWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
-	xmlns:controls="clr-namespace:ExplorerX.Controls;assembly=ExplorerX.Controls"
-	mc:Ignorable="d" fw:AcrylicWindow.Enabled="True" fw:AcrylicWindow.AcrylicWindowStyle="NoIcon"
-	Title="ExplorerX" Height="650" Width="1200" MinHeight="300" MinWidth="540">
+    x:Class="ExplorerX.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ExplorerX"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
 
-	<controls:ElasticTabControl x:Name="RootTabControl" AddedItem="OnItemAdded" />
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
+    </StackPanel>
 </Window>

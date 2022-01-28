@@ -1,24 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <_LastSelectedProfileId>D:\Repos\Stars-sea\ExplorerX\ExplorerX\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
-    <ApplicationDefinition Update="App.xaml">
+    <None Update="App.xaml">
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Pages\FilesViewer.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="MainWindow.xaml">
+    </None>
+    <None Update="MainWindow.xaml">
       <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Pages\FilesViewer.xaml">
+    </None>
+    <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
-    </Page>
+    </None>
   </ItemGroup>
 </Project>

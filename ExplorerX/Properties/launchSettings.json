@@ -1,8 +1,10 @@
 {
-	"profiles": {
-		"ExplorerX": {
-			"commandName": "Project",
-			"remoteDebugEnabled": false
-		}
-	}
+  "profiles": {
+    "ExplorerX (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ExplorerX (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
 }
