@@ -1,34 +1,38 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media.Animation;
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace ExplorerX {
 	/// <summary>
 	/// An empty window that can be used on its own or navigated to within a Frame.
 	/// </summary>
-	public sealed partial class MainWindow : Window {
+	public sealed partial class MainWindow : Window, INavigate {
+		public Page? CurrentPage => ContentFrame.Content as Page;
+
+		public event Action<Page?> Navigated;
+
 		public MainWindow() {
-			this.InitializeComponent();
+			InitializeComponent();
+			Navigated += OnNavigated;
 		}
 
-		private void myButton_Click(object sender, RoutedEventArgs e) {
-			myButton.Content = "Clicked";
+		private void OnNavigated(Page? newPage) {
+			if (CurrentPage?.Background is SolidColorBrush brush)
+				App.InitAppButtons(brush.Color);
 		}
+
+		public bool Navigate(Type sourcePageType, NavigationTransitionInfo transition) {
+			if (ContentFrame.Navigate(sourcePageType, null, transition)) {
+				Navigated(CurrentPage);
+				return true;
+			}
+			return false;
+		}
+
+		public bool Navigate(Type sourcePageType) 
+			=> Navigate(sourcePageType, new DrillInNavigationTransitionInfo());
 	}
 }

@@ -1,0 +1,18 @@
+﻿<Page
+    x:Class="ExplorerX.Pages.LoadingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Viewbox>
+		<Grid>
+		    <Image Source="../Assets/SplashScreen.scale-200.png" Visibility="{x:Bind LogoVisibility}" />
+
+			<ProgressRing IsActive="{x:Bind IsProgressing}"
+						  Margin="0 450 0 100" VerticalAlignment="Center" />
+		</Grid>
+	</Viewbox>
+</Page>
