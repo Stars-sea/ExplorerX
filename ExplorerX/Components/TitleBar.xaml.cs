@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 
 
-namespace ExplorerX {
+namespace ExplorerX.Components {
 	public sealed partial class TitleBar : UserControl {
 
 		public string Title {

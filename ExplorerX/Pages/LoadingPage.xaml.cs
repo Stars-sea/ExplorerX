@@ -4,11 +4,8 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace ExplorerX.Pages {
 	/// <summary>
-	/// <para>
-	/// Loading Page, like Splash Screen in UWP
-	/// </para><para>
-	/// 加载页面, 类似于 UWP 的 Splash Screen
-	/// </para>
+	/// <para>Loading Page, like Splash Screen in UWP</para>
+	/// <para>加载页面, 类似于 UWP 的 Splash Screen</para>
 	/// </summary>
 	public sealed partial class LoadingPage : Page {
 

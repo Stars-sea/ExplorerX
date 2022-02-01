@@ -30,7 +30,7 @@ namespace ExplorerX {
 		/// 初始化任务, 结束后才退出 <see cref="Pages.LoadingPage"/>
 		/// </summary>
 		private void InitApp() {
-			// TODO: 再此增加应用程序初始化任务
+			AppLifecircle.OnLoadingQuickAccess(this);
 		}
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace ExplorerX {
 			AppWindow   = AppWindow.GetFromWindowId(id);
 
 			AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-
+			
 			await Task.Run(InitApp);
 			Window.Navigate(typeof(Pages.CommonPage));
 
