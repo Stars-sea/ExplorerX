@@ -1,7 +1,13 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
+﻿using ExplorerX.Data;
 
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+
+using System;
 using System.IO;
+using System.Linq;
+
 
 namespace ExplorerX.Pages {
 	/// <summary>
@@ -9,6 +15,8 @@ namespace ExplorerX.Pages {
 	/// <para>通用页面</para>
 	/// </summary>
 	public sealed partial class CommonPage : Page {
+		private record NavTag(Type PageType, object Param);
+
 		public CommonPage() {
 			InitializeComponent();
 		}
@@ -16,39 +24,57 @@ namespace ExplorerX.Pages {
 		private void OnPanelLoading(FrameworkElement sender, object args) {
 			if (sender is not NavigationView view) return;
 
+			// Home
 			NavigationViewItem home = new() {
-				Content	= "Home",
-				Tag     = "$Home",
-				Icon	= new SymbolIcon(Symbol.Home)
+				Content = "Home",
+				Tag     = new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.All),
+				Icon    = new SymbolIcon(Symbol.Home)
 			};
+			view.MenuItems.Add(home);
+
 
 			if (RegistryManagers.QuickAccess.Count != 0) {
+				// QuickAccess
 				NavigationViewItem item = new() {
 					Content	= "Quick Access",
-					Tag		= "$QuickAccess",
+					Tag		= new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.QuickAccess),
 					Icon	= new SymbolIcon(Symbol.Favorite),
 				};
+				// Children
 				foreach ((string name, string path) in RegistryManagers.QuickAccess)
 					item.MenuItems.Add(new NavigationViewItem {
 						Content	= name,
-						Tag		= path
+						Tag		= new NavTag(typeof(ItemsViewPage), path)
 						// TODO: Icon
 					});
 
 				view.MenuItems.Add(item);
 			}
 
+
+			// Drives
 			NavigationViewItem drives = new() {
-				Content		= "Drives",
-				Icon		= new SymbolIcon(Symbol.MapDrive),
+				Content	= "Drives",
+				Tag		= new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.Drives),
+				Icon	= new SymbolIcon(Symbol.MapDrive),
 			};
-			foreach (DriveInfo info in DriveInfo.GetDrives())
+			// Children
+			foreach (DriveInfo info in DriveInfo.GetDrives().Where(d => d.IsReady))
 				drives.MenuItems.Add(new NavigationViewItem {
 					Content = $"{info.VolumeLabel}({info.Name[..^1]})",
-					Tag		= info.RootDirectory.FullName
+					Tag		= new NavTag(typeof(ItemsViewPage), info.RootDirectory.FullName)
 					// TODO: Icon
 				});
 			view.MenuItems.Add(drives);
+		}
+
+		private void OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
+			NavTag tag = (NavTag)((NavigationViewItem)args.SelectedItem).Tag;
+			MainFrame.Navigate(tag.PageType, tag.Param);
+		}
+
+		private void OnNavigating(object sender, NavigatingCancelEventArgs e) {
+			// UNDONE: Set Page's property
 		}
 	}
 }

@@ -30,6 +30,9 @@ namespace ExplorerX {
 		/// 初始化任务, 结束后才退出 <see cref="Pages.LoadingPage"/>
 		/// </summary>
 		private void InitApp() {
+			Events.AppInitiatingHandler.Init();
+			AppLifecircle.OnAppInitiating(this);
+			AppLifecircle.OnLoadingVariables(this);
 			AppLifecircle.OnLoadingQuickAccess(this);
 		}
 

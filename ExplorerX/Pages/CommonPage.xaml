@@ -16,8 +16,14 @@
 
 		<components:TitleBar Grid.Row="0" />
 
-		<NavigationView Grid.Row="1" Loading="OnPanelLoading">
-			<Frame />
+		<NavigationView Grid.Row="1" Loading="OnPanelLoading" SelectionChanged="OnSelectionChanged">
+			<Frame x:Name="MainFrame" Navigating="OnNavigating">
+				<Frame.Transitions>
+					<TransitionCollection>
+						<NavigationThemeTransition />
+					</TransitionCollection>
+				</Frame.Transitions>
+			</Frame>
 		</NavigationView>
 	</Grid>
 </Page>
