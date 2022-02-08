@@ -17,7 +17,7 @@ namespace ExplorerX {
 		public static MainWindow? Window    { get; private set; }
 		public static AppWindow?  AppWindow { get; private set; }
 		#endregion
-
+		
 		/// <summary>
 		/// Initializes the singleton application object.  This is the first line of authored code
 		/// executed, and as such is the logical equivalent of main() or WinMain().
@@ -30,7 +30,7 @@ namespace ExplorerX {
 		/// 初始化任务, 结束后才退出 <see cref="Pages.LoadingPage"/>
 		/// </summary>
 		private void InitApp() {
-			Events.AppInitiatingHandler.Init();
+			Events.Handlers.AppInitiatingHandler.Init();
 			AppLifecircle.OnAppInitiating(this);
 			AppLifecircle.OnLoadingVariables(this);
 			AppLifecircle.OnLoadingQuickAccess(this);

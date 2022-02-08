@@ -21,7 +21,7 @@ namespace ExplorerX.Data {
 		private PathContainer(string originPath) => this.originPath = originPath;
 
 		// 此处需要强制转换是为了不混淆
-		public static explicit operator PathContainer(string Path) => new PathContainer(Path);
+		public static explicit operator PathContainer(string path) => new(SimplifyPath(path));
 		public static implicit operator string(PathContainer container) => container.originPath;
 
 		public IEnumerator<string> GetEnumerator() {
@@ -35,7 +35,8 @@ namespace ExplorerX.Data {
 					builder.Clear();
 				}
 			}
-			yield return builder.ToString();
+			if (builder.Length != 0)
+				yield return builder.ToString();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -52,5 +53,21 @@ namespace ExplorerX.Data {
 		}
 
 		public override string ToString() => originPath;
+
+		public static string SimplifyPath(string origin) {
+			PathContainer container	= new(origin);
+			LinkedList<string> list = new();
+			foreach (string segment in container) {
+				string trimed = segment.TrimEnd('/', '\\');
+				if (trimed.Equals("."))
+					continue;
+				if (trimed.Equals("..") && list.Any())
+					list.RemoveLast();
+				else
+					list.Append(segment);
+			}
+			StringBuilder builder = new();
+			return builder.AppendJoin(null, list).ToString();
+		}
 	}
 }

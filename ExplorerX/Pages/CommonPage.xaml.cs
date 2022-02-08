@@ -26,9 +26,10 @@ namespace ExplorerX.Pages {
 
 			// Home
 			NavigationViewItem home = new() {
-				Content = "Home",
-				Tag     = new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.All),
-				Icon    = new SymbolIcon(Symbol.Home)
+				Content		= "Home",
+				Tag			= new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.All),
+				Icon		= new SymbolIcon(Symbol.Home),
+				IsSelected	= true
 			};
 			view.MenuItems.Add(home);
 
@@ -69,8 +70,9 @@ namespace ExplorerX.Pages {
 		}
 
 		private void OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
-			NavTag tag = (NavTag)((NavigationViewItem)args.SelectedItem).Tag;
-			MainFrame.Navigate(tag.PageType, tag.Param);
+			NavigationViewItem item = (NavigationViewItem)args.SelectedItem;
+			if (item.Tag is NavTag tag)
+				MainFrame.Navigate(tag.PageType, tag.Param);
 		}
 
 		private void OnNavigating(object sender, NavigatingCancelEventArgs e) {

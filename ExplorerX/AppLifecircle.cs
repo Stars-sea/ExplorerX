@@ -31,7 +31,7 @@ namespace ExplorerX {
 			TypedEventHandler<App, RegistryLoadingArgs<T>>? @event,
 			App sender, RegistryManager<T> registry
 		) where T : notnull {
-			RegistryLoadingArgs<T> args = new(registry.Register, registry.Exist);
+			RegistryLoadingArgs<T> args = new(registry.Register, registry.ContainsKey);
 			RaiseEvent(@event, sender, args);
 		}
 
