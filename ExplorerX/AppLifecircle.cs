@@ -29,7 +29,7 @@ namespace ExplorerX {
 
 		private static void OnRegistryLoading<T>(
 			TypedEventHandler<App, RegistryLoadingArgs<T>>? @event,
-			App sender, RegistryManager<T> registry
+			App sender, Registry<T> registry
 		) where T : notnull {
 			RegistryLoadingArgs<T> args = new(registry.Register, registry.ContainsKey);
 			RaiseEvent(@event, sender, args);

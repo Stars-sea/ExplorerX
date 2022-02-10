@@ -10,8 +10,8 @@ namespace ExplorerX.Events.Handlers {
 				window.Closed += Handler;
 		}
 
-		private static void Handler(object sender, WindowEventArgs args) {
-			RegistryManagers.SaveAll();
+		private static async void Handler(object sender, WindowEventArgs args) {
+			await RegistryManagers.SaveAll();
 		}
 	}
 }

@@ -5,12 +5,19 @@ using System.Threading.Tasks;
 
 namespace ExplorerX.Data {
 	public interface IStorable {
-		ValueTask<bool> SaveAsync(string path, CancellationToken token);
+		bool Save(string path);
+
+		async ValueTask<bool> SaveAsync(string path, CancellationToken token)
+			=> await Task.Run(() => Save(path), token);
 
 		virtual async ValueTask<bool> SaveAsync(string path, double sec)
 			=> await SaveAsync(path, new CancellationTokenSource(TimeSpan.FromSeconds(sec)).Token);
 
-		ValueTask<bool> ReadAsync(string path, CancellationToken token);
+
+		bool Read(string path);
+
+		async ValueTask<bool> ReadAsync(string path, CancellationToken token)
+			=> await Task.Run(() => Read(path), token);
 
 		virtual async ValueTask<bool> ReadAsync(string path, double sec)
 			=> await ReadAsync(path, new CancellationTokenSource(TimeSpan.FromSeconds(sec)).Token);

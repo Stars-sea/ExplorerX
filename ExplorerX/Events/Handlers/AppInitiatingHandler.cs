@@ -7,12 +7,12 @@ namespace ExplorerX.Events.Handlers {
 			AppLifecircle.AppInitiating += Handler;
 		}
 
-		private static void Handler(App app) {
+		private static async void Handler(App app) {
 			// Handlers binding
 			WindowClosedHandler.Init();
 			RegistryLoadingHandler.Init();
 
-			RegistryManagers.PreInit();
+			await RegistryManagers.Reload();
 
 			// UNDONE: Scan other assemblies & run its code, like bukkit plugin in Minecraft
 		}
