@@ -2,11 +2,13 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 
+using System;
 using System.Threading.Tasks;
 
 using Windows.UI;
 
 using WinRT.Interop;
+
 
 namespace ExplorerX {
 	/// <summary>
@@ -17,23 +19,16 @@ namespace ExplorerX {
 		public static MainWindow? Window    { get; private set; }
 		public static AppWindow?  AppWindow { get; private set; }
 		#endregion
-		
+
+		public event Action AppInitiating;
+
 		/// <summary>
 		/// Initializes the singleton application object.  This is the first line of authored code
 		/// executed, and as such is the logical equivalent of main() or WinMain().
 		/// </summary>
 		public App() {
 			InitializeComponent();
-		}
-
-		/// <summary>
-		/// 初始化任务, 结束后才退出 <see cref="Pages.LoadingPage"/>
-		/// </summary>
-		private void InitApp() {
-			Events.Handlers.AppInitiatingHandler.Init();
-			AppLifecircle.OnAppInitiating(this);
-			AppLifecircle.OnLoadingVariables(this);
-			AppLifecircle.OnLoadingQuickAccess(this);
+			AppInitiating += Events.Handlers.AppInitiatingHandler.InitAsync;
 		}
 
 		/// <summary>
@@ -49,7 +44,7 @@ namespace ExplorerX {
 
 			AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 			
-			await Task.Run(InitApp);
+			await Task.Run(AppInitiating);
 			Window.Navigate(typeof(Pages.CommonPage));
 
 			Window.Activate();

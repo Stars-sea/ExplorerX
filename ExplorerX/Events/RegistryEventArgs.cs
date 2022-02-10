@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ExplorerX.Events {
 	/// <summary>
@@ -14,8 +15,10 @@ namespace ExplorerX.Events {
 	/// Examine whether the incoming name has been used.
 	/// 检测传入的名称是否被占用
 	/// </param>
-	public record RegistryLoadingArgs<T>(
+	public record RegistryEventArgs<T>(
 		Func<string, T, bool> Add,
-		Func<string, bool> Exist
+		Func<string, bool> Remove,
+		Func<string, bool> Exist,
+		Action<IDictionary<string, T>> AddAll
 	);
 }

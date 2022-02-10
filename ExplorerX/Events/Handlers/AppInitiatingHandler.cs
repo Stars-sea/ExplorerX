@@ -2,15 +2,11 @@
 
 
 namespace ExplorerX.Events.Handlers {
-	internal static class AppInitiatingHandler {
-		internal static void Init() {
-			AppLifecircle.AppInitiating += Handler;
-		}
 
-		private static async void Handler(App app) {
-			// Handlers binding
+	internal static class AppInitiatingHandler {
+		internal static async void InitAsync() {
 			WindowClosedHandler.Init();
-			RegistryLoadingHandler.Init();
+			RegistryFileNotFoundHandler.Init();
 
 			await RegistryManagers.Reload();
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ExplorerX.Events;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,13 +29,19 @@ namespace ExplorerX.Data {
 
 		private Entries entries = new();
 
+		/// <summary>
+		/// <para>When it is called, we can add default entries.</para>
+		/// <para>当它被调用时, 我们可以添加默认条目</para>
+		/// </summary>
+		public event EventHandler<RegistryEventArgs<T>>? NotFoundFile;
+
 		#region Common Medthods
 
-		public T this[string id] {
-			get => Get(id);
+		public T this[string key] {
+			get => entries[key];
 			set {
-				if (!Register(id, value))
-					throw new InvalidOperationException($"Failed to register {Name}.{id}");
+				if (!Register(key, value))
+					throw new InvalidOperationException($"Failed to register {Name}.{key}");
 			}
 		}
 
@@ -51,6 +59,11 @@ namespace ExplorerX.Data {
 			return false;
 		}
 
+		public void RegisterAll(IDictionary<string, T> entries) {
+			foreach ((string k, T v) in entries)
+				Register(k, v);
+		}
+
 		public bool Unregister(string key) => entries.Remove(key);
 
 		/// <summary>
@@ -63,20 +76,14 @@ namespace ExplorerX.Data {
 			return false;
 		}
 
-		public T    Get(string key) => entries[key];
-		public bool TryGetValue(string id, [NotNullWhen(true)] out T? value)
-			=> (value = this[id]) is not null;
+		public bool TryGetValue(string key, [NotNullWhen(true)] out T? value)
+			=> entries.TryGetValue(key, out value);
 
-		public bool ContainsKey(string id) => entries.ContainsKey(id);
+		public bool ContainsKey(string key) => entries.ContainsKey(key);
 
 		public IEnumerator<KeyValuePair<string, T>> GetEnumerator()
 			=> entries.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-		public void Deconstruct(out IEnumerable<string> keys, out IEnumerable<T> values) {
-			keys    = Keys;
-			values = Values;
-		}
 		#endregion
 
 		#region IO Operations
@@ -93,8 +100,11 @@ namespace ExplorerX.Data {
 		public bool Read(string dir) {
 			string path = GetPath(dir);
 			if (!File.Exists(path)) {
-				// UNDONE: Call a event to get default entries
-				Trace.TraceWarning($"Not found file. ({path})");
+				Trace.TraceWarning($"Not found file when init registry {Name}.");
+				if (NotFoundFile is not null) {
+					Trace.TraceInformation($"App will try to generate default entries in registry {Name}.");
+					NotFoundFile(this, new(Register, Unregister, ContainsKey, RegisterAll));
+				}
 				return false;
 			}
 
