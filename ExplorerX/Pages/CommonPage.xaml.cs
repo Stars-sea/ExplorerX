@@ -32,7 +32,7 @@ namespace ExplorerX.Pages {
 				IsSelected	= true
 			};
 			view.MenuItems.Add(home);
-
+			
 
 			if (RegistryManagers.QuickAccess.Count != 0) {
 				// QuickAccess

@@ -29,11 +29,8 @@ namespace ExplorerX.Data {
 
 		private Entries entries = new();
 
-		/// <summary>
-		/// <para>When it is called, we can add default entries.</para>
-		/// <para>当它被调用时, 我们可以添加默认条目</para>
-		/// </summary>
-		public event EventHandler<RegistryEventArgs<T>>? NotFoundFile;
+		public event EventHandler<RegistryLoadedArgs<T>>?  RegLoaded;
+		public event EventHandler<RegistryChangedArgs<T>>? RegChanged;
 
 		#region Common Medthods
 
@@ -45,34 +42,52 @@ namespace ExplorerX.Data {
 			}
 		}
 
-		/// <summary>
-		/// <para>Register a key/value pair</para>
-		/// <para>注册一个键值对</para>
-		/// </summary>
-		/// <returns>
-		/// <see cref="true"/> if the key matches the regex and doesn't contains in the registry;
-		/// otherwise, <see cref="false"/>
-		/// </returns>
-		public bool Register(string key, T value) {
+		// 注册键值对但不调用事件
+		private bool Register_(string key, T value) {
 			if (KeyRegex?.IsMatch(key) ?? true)
 				return entries.TryAdd(key, value);
 			return false;
 		}
 
-		public void RegisterAll(IDictionary<string, T> entries) {
-			foreach ((string k, T v) in entries)
-				Register(k, v);
+		/// <summary>
+		/// <para>Register a key/value pair</para>
+		/// <para>注册一个键值对</para>
+		/// </summary>
+		public bool Register(string key, T value) {
+			if (Register_(key, value)) {
+				RegChanged?.Invoke(this, new(
+					new Entries { [key] = value },
+					RegistryChangedArgs<T>.OperationMode.Register
+				));
+				return true;
+			}
+			return false;
 		}
 
-		public bool Unregister(string key) => entries.Remove(key);
+		public void RegisterAll(IDictionary<string, T> entries) {
+			var current = entries.TakeWhile(p => Register_(p.Key, p.Value)).ToArray();
+
+			if (current.Any())
+				RegChanged?.Invoke(this, new(
+					new Dictionary<string, T>(current),
+					RegistryChangedArgs<T>.OperationMode.Register
+				));
+		}
+
+		public bool Unregister(string key) => Unregister(key, out _);
 
 		/// <summary>
 		/// <para>Unregister & get the key/value pair</para>
 		/// <para>注销并取得键值对</para>
 		/// </summary>
 		public bool Unregister(string key, [NotNullWhen(true)] out T? value) {
-			if (entries.TryGetValue(key, out value))
-				return entries.Remove(key);
+			if (entries.Remove(key, out value)) {
+				RegChanged?.Invoke(this, new(
+					new Entries { [key] = value },
+					RegistryChangedArgs<T>.OperationMode.Unregister
+				));
+				return true;
+			}
 			return false;
 		}
 
@@ -97,22 +112,25 @@ namespace ExplorerX.Data {
 			return true;
 		}
 
-		public bool Read(string dir) {
+		private bool Read_(string dir) {
 			string path = GetPath(dir);
 			if (!File.Exists(path)) {
-				Trace.TraceWarning($"Not found file when init registry {Name}.");
-				if (NotFoundFile is not null) {
-					Trace.TraceInformation($"App will try to generate default entries in registry {Name}.");
-					NotFoundFile(this, new(Register, Unregister, ContainsKey, RegisterAll));
-				}
+				Trace.TraceWarning($"File not found while initializing registry {Name}.");
+				Trace.TraceInformation($"App will try to generate default entries in registry {Name}.");
 				return false;
 			}
 
-			Builder? builder = Builder.GetFromFile(path);
+			Builder? builder  = Builder.GetFromFile(path);
+			bool     canReset = builder is not null;
 
-			if (builder is not null)
-				entries = builder.Entries;
-			return true;
+			if (canReset) RegisterAll(builder!.Entries);
+			return canReset;
+		}
+
+		public bool Read(string dir) {
+			bool result = Read_(dir);
+			RegLoaded?.Invoke(this, new(result, this));
+			return result;
 		}
 		#endregion
 
@@ -122,8 +140,7 @@ namespace ExplorerX.Data {
 			ItemName	= "Entry",
 			KeyName		= "Key",
 			ValueName	= "Value",
-			Namespace	= "http://shcemas.explorerx.org/data"
-		)]
+			Namespace	= "http://shcemas.explorerx.org/data")]
 		public sealed class Entries : Dictionary<string, T> { }
 
 		[DataContract(Name = "Registry", Namespace = "http://shcemas.explorerx.org/data")]
