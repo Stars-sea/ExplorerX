@@ -1,5 +1,7 @@
 ﻿using ExplorerX.Events;
 
+using Newtonsoft.Json;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,13 +10,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
 namespace ExplorerX.Data {
 
+	[JsonObject]
 	public sealed record Registry<T>(
 		[CallerMemberName]
 		string	Name		= "",
@@ -22,17 +24,27 @@ namespace ExplorerX.Data {
 		Regex?	KeyRegex	= null
 	) : IStorable, IReadOnlyDictionary<string, T> where T : notnull {
 
-		public int Count => entries.Count;
+		[JsonIgnore] public int Count => entries.Count;
 
-		public IEnumerable<string> Keys => entries.Keys;
-		public IEnumerable<T> Values => entries.Values;
+		[JsonIgnore] public IEnumerable<string> Keys => entries.Keys;
+		[JsonIgnore] public IEnumerable<T> Values => entries.Values;
 
-		private Entries entries = new();
+		[JsonProperty(PropertyName = "Entries")]
+		private readonly KeyRestrictionDict<T> entries = new(KeyRegex);
 
 		public event EventHandler<RegistryLoadedArgs<T>>?  RegLoaded;
 		public event EventHandler<RegistryChangedArgs<T>>? RegChanged;
 
 		#region Common Medthods
+		[JsonConstructor]
+		internal Registry(string name, string? desc, Regex? keyRegex, Dictionary<string, T> entries)
+			: this(name, desc, keyRegex)
+		{
+			// Necessary, entries may have been manipulated with LINQ
+			// 不知道为什么没了这句就读不了键值对 _(:з)∠)_, 也许用了 LINQ ?
+			foreach (var entry in entries) { }
+			this.entries = new(keyRegex, entries);
+		}
 
 		public T this[string key] {
 			get => entries[key];
@@ -42,21 +54,14 @@ namespace ExplorerX.Data {
 			}
 		}
 
-		// 注册键值对但不调用事件
-		private bool Register_(string key, T value) {
-			if (KeyRegex?.IsMatch(key) ?? true)
-				return entries.TryAdd(key, value);
-			return false;
-		}
-
 		/// <summary>
 		/// <para>Register a key/value pair</para>
 		/// <para>注册一个键值对</para>
 		/// </summary>
 		public bool Register(string key, T value) {
-			if (Register_(key, value)) {
+			if (entries.TryAdd(key, value)) {
 				RegChanged?.Invoke(this, new(
-					new Entries { [key] = value },
+					new Dictionary<string, T> { [key] = value },
 					RegistryChangedArgs<T>.OperationMode.Register
 				));
 				return true;
@@ -65,7 +70,7 @@ namespace ExplorerX.Data {
 		}
 
 		public void RegisterAll(IDictionary<string, T> entries) {
-			var current = entries.TakeWhile(p => Register_(p.Key, p.Value)).ToArray();
+			var current = this.entries.AddPairs(entries);
 
 			if (current.Any())
 				RegChanged?.Invoke(this, new(
@@ -83,7 +88,7 @@ namespace ExplorerX.Data {
 		public bool Unregister(string key, [NotNullWhen(true)] out T? value) {
 			if (entries.Remove(key, out value)) {
 				RegChanged?.Invoke(this, new(
-					new Entries { [key] = value },
+					new Dictionary<string, T> { [key] = value },
 					RegistryChangedArgs<T>.OperationMode.Unregister
 				));
 				return true;
@@ -96,19 +101,19 @@ namespace ExplorerX.Data {
 
 		public bool ContainsKey(string key) => entries.ContainsKey(key);
 
+		IEnumerator IEnumerable.GetEnumerator() => entries.GetEnumerator();
 		public IEnumerator<KeyValuePair<string, T>> GetEnumerator()
 			=> entries.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		#endregion
 
 		#region IO Operations
-		private string GetPath(string dir) => Path.Combine(dir, $"{Name}.xml");
+		private string GetPath(string dir) => Path.Combine(dir, $"{Name}.json");
 
 		public bool Save(string dir) {
-			using FileStream stream = File.OpenWrite(GetPath(dir));
+			using StreamWriter sw = new(File.OpenWrite(GetPath(dir)));
+			sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
+			sw.Flush();
 
-			DataContractSerializer serializer = new(typeof(Builder));
-			serializer.WriteObject(stream, new Builder(this));
 			return true;
 		}
 
@@ -120,11 +125,12 @@ namespace ExplorerX.Data {
 				return false;
 			}
 
-			Builder? builder  = Builder.GetFromFile(path);
-			bool     canReset = builder is not null;
-
-			if (canReset) RegisterAll(builder!.Entries);
-			return canReset;
+			Registry<T>? registry = ReadFromFile(path);
+			if (registry is not null) {
+				RegisterAll(registry.entries);
+				return true;
+			}
+			return false;
 		}
 
 		public bool Read(string dir) {
@@ -132,60 +138,10 @@ namespace ExplorerX.Data {
 			RegLoaded?.Invoke(this, new(result, this));
 			return result;
 		}
-		#endregion
 
-		#region Inner Classes
-		[CollectionDataContract(
-			IsReference	= true,
-			ItemName	= "Entry",
-			KeyName		= "Key",
-			ValueName	= "Value",
-			Namespace	= "http://shcemas.explorerx.org/data")]
-		public sealed class Entries : Dictionary<string, T> { }
-
-		[DataContract(Name = "Registry", Namespace = "http://shcemas.explorerx.org/data")]
-		public sealed class Builder {
-
-			[DataMember(IsRequired = true)]
-			public string	Name { get; set; } = "";
-
-			[DataMember(EmitDefaultValue = false)]
-			public string?	Desc { get; set; }
-
-			[DataMember(IsRequired = true)]
-			public Entries	Entries { get; set; } = new();
-
-			[DataMember(Name = "KeyRegex", EmitDefaultValue = false)]
-			string? KeyPattern;
-			public Regex? KeyRegex { get; set; }
-
-			[OnSerializing]
-			void OnSerializing(StreamingContext context) {
-				KeyPattern = KeyRegex?.ToString();
-			}
-
-			[OnDeserialized]
-			void OnDeserialized(StreamingContext context) {
-				if (!string.IsNullOrWhiteSpace(KeyPattern))
-					KeyRegex = new(KeyPattern);
-			}
-
-			public Registry<T> Build()
-				=> new(Name, Desc, KeyRegex) { entries = Entries };
-
-			public Builder(Registry<T> registry) {
-				Name		= registry.Name;
-				Desc		= registry.Desc;
-				KeyRegex    = registry.KeyRegex;
-				Entries     = registry.entries;
-			}
-
-			public static Builder? GetFromFile(string path) {
-				using FileStream stream = File.OpenRead(path);
-
-				DataContractSerializer serializer = new(typeof(Builder));
-				return (Builder?)serializer.ReadObject(stream);
-			}
+		public static Registry<T>? ReadFromFile(string path) {
+			using StreamReader sr = new(File.OpenRead(path));
+			return JsonConvert.DeserializeObject<Registry<T>>(sr.ReadToEnd());
 		}
 		#endregion
 	}

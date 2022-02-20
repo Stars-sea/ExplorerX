@@ -13,7 +13,7 @@ namespace ExplorerX.Events.Handlers {
 			RegistryManagers.QuickAccess.RegLoaded += LoadingDefaultQuickAcess;
 		}
 
-		private static void LoadingDefaultVariables(object? sender, RegistryLoadedArgs<object> args) {
+		private static async void LoadingDefaultVariables(object? sender, RegistryLoadedArgs<object> args) {
 			if (args.IsSuccess) return;
 
 			// We do not use AppDataPaths because of its limit
@@ -25,9 +25,12 @@ namespace ExplorerX.Events.Handlers {
 				["$Documents"]	= Environment.SpecialFolder.MyDocuments.Get(),
 				["$Downloads"]	= Shell32.SHGetKnownFolderPath(Shell32.KNOWNFOLDERID.FOLDERID_Downloads)
 			});
+
+			if (sender is IStorable storable)
+				await storable.SaveAsync(ConfigPath.Registry, 3);
 		}
 
-		private static void LoadingDefaultQuickAcess(object? sender, RegistryLoadedArgs<string> args) {
+		private static async void LoadingDefaultQuickAcess(object? sender, RegistryLoadedArgs<string> args) {
 			if (args.IsSuccess) return;
 
 			args.AddAll(new Dictionary<string, string> {
@@ -38,6 +41,9 @@ namespace ExplorerX.Events.Handlers {
 				["Documents"]	= "$Documents",
 				["Downloads"]	= "$Downloads"
 			});
+
+			if (sender is IStorable storable)
+				await storable.SaveAsync(ConfigPath.Registry, 3);
 		}
 	}
 }
