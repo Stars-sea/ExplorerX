@@ -5,7 +5,7 @@ namespace ExplorerX.Events.Handlers {
 
 	internal static class AppInitiatingHandler {
 		internal static async void InitAsync() {
-			WindowClosedHandler.Init();
+			RegistryChangedHandler.Init();
 			RegistryLoadedHandler.Init();
 
 			await RegistryManagers.Reload();

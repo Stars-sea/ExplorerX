@@ -70,11 +70,12 @@ namespace ExplorerX.Data {
 		}
 
 		public void RegisterAll(IDictionary<string, T> entries) {
-			var current = this.entries.AddPairs(entries);
+			var failed	  = this.entries.AddPairs(entries);
+			var succeeded = failed.Any() ? entries.Except(failed) : entries;
 
-			if (current.Any())
+			if (succeeded.Any())
 				RegChanged?.Invoke(this, new(
-					new Dictionary<string, T>(current),
+					new Dictionary<string, T>(succeeded),
 					RegistryChangedArgs<T>.OperationMode.Register
 				));
 		}
@@ -104,6 +105,8 @@ namespace ExplorerX.Data {
 		IEnumerator IEnumerable.GetEnumerator() => entries.GetEnumerator();
 		public IEnumerator<KeyValuePair<string, T>> GetEnumerator()
 			=> entries.GetEnumerator();
+
+		public override string ToString() => $"Registry[{Name}]";
 		#endregion
 
 		#region IO Operations
@@ -120,14 +123,16 @@ namespace ExplorerX.Data {
 		private bool Read_(string dir) {
 			string path = GetPath(dir);
 			if (!File.Exists(path)) {
-				Trace.TraceWarning($"File not found while initializing registry {Name}.");
-				Trace.TraceInformation($"App will try to generate default entries in registry {Name}.");
+				Trace.TraceWarning($"File not found while initializing {this}.");
+				Trace.TraceInformation($"App will try to generate default entries in {this}.");
 				return false;
 			}
 
 			Registry<T>? registry = ReadFromFile(path);
 			if (registry is not null) {
-				RegisterAll(registry.entries);
+				// Don't call RegChanged.
+				// RegisterAll(registry.entries);
+				entries.AddPairs(registry.entries);
 				return true;
 			}
 			return false;
