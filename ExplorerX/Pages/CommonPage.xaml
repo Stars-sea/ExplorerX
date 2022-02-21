@@ -16,14 +16,28 @@
 
 		<components:TitleBar Grid.Row="0" />
 
-		<NavigationView Grid.Row="1" Loading="OnPanelLoading" SelectionChanged="OnSelectionChanged">
-			<Frame x:Name="MainFrame" Navigating="OnNavigating">
-				<Frame.Transitions>
-					<TransitionCollection>
-						<NavigationThemeTransition />
-					</TransitionCollection>
-				</Frame.Transitions>
-			</Frame>
-		</NavigationView>
+		<NavigationView Grid.Row="1" SelectionChanged="OnSelectionChanged">
+            <NavigationView.MenuItems>
+                <NavigationViewItem
+                    Content="Home" Icon="Home" IsSelected="True"
+                    Tag="page:///ExplorerX.Pages.ItemsRootPage?All" />
+
+                <NavigationViewItem x:Name="QuickAccess"
+                    Content="Quick Access" Icon="Favorite" Loading="OnQucikAccessLoading"
+                    Tag="page:///ExplorerX.Pages.ItemsRootPage?QuickAccess" />
+
+                <NavigationViewItem x:Name="Drives"
+                    Content="Drives" Icon="MapDrive" Loading="OnDrivesLoading"
+                    Tag="page:///ExplorerX.Pages.ItemsRootPage?Drives" />
+            </NavigationView.MenuItems>
+            
+            <Frame x:Name="MainFrame" Navigated="OnNavigated">
+                <Frame.Transitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition />
+                    </TransitionCollection>
+                </Frame.Transitions>
+            </Frame>
+        </NavigationView>
 	</Grid>
 </Page>

@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -21,62 +23,79 @@ namespace ExplorerX.Pages {
 			InitializeComponent();
 		}
 
-		private void OnPanelLoading(FrameworkElement sender, object args) {
-			if (sender is not NavigationView view) return;
+		#region Menu Items
 
-			// Home
-			NavigationViewItem home = new() {
-				Content		= "Home",
-				Tag			= new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.All),
-				Icon		= new SymbolIcon(Symbol.Home),
-				IsSelected	= true
-			};
-			view.MenuItems.Add(home);
-			
-
-			if (RegistryManagers.QuickAccess.Count != 0) {
-				// QuickAccess
-				NavigationViewItem item = new() {
-					Content	= "Quick Access",
-					Tag		= new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.QuickAccess),
-					Icon	= new SymbolIcon(Symbol.Favorite),
-				};
-				// Children
-				foreach ((string name, string path) in RegistryManagers.QuickAccess)
-					item.MenuItems.Add(new NavigationViewItem {
-						Content	= name,
-						Tag		= new NavTag(typeof(ItemsViewPage), path)
-						// TODO: Icon
-					});
-
-				view.MenuItems.Add(item);
-			}
-
-
-			// Drives
-			NavigationViewItem drives = new() {
-				Content	= "Drives",
-				Tag		= new NavTag(typeof(ItemsRootPage), ItemsRootPage.ViewMode.Drives),
-				Icon	= new SymbolIcon(Symbol.MapDrive),
-			};
-			// Children
-			foreach (DriveInfo info in DriveInfo.GetDrives().Where(d => d.IsReady))
-				drives.MenuItems.Add(new NavigationViewItem {
-					Content = $"{info.VolumeLabel}({info.Name[..^1]})",
-					Tag		= new NavTag(typeof(ItemsViewPage), info.RootDirectory.FullName)
+		public void ReloadQuickAccess() {
+			var items = RegistryManagers.QuickAccess.Select(
+				p => new NavigationViewItem() {
+					Content = p.Key,
+					Tag     = new Uri($"page:///ExplorerX.Pages.ItemsViewPage?{p.Value}")
 					// TODO: Icon
-				});
-			view.MenuItems.Add(drives);
+				}
+			);
+
+			QuickAccess.MenuItems.Clear();
+			foreach (NavigationViewItem item in items)
+				QuickAccess.MenuItems.Add(item);
 		}
+
+		public void ReloadDrives() {
+			var items =
+				from drive in DriveInfo.GetDrives()
+				where drive.IsReady
+				let name = drive.Name[..^1]
+				orderby name
+				select new NavigationViewItem {
+					Content	= $"{drive.VolumeLabel}({name})",
+					Tag		= new Uri($"page:///ExplorerX.Pages.ItemsViewPage?{name}")
+				};
+
+			Drives.MenuItems.Clear();
+			foreach (NavigationViewItem item in items)
+				Drives.MenuItems.Add(item);
+		}
+
+		private void OnQucikAccessLoading(FrameworkElement sender, object args) 
+			=> ReloadQuickAccess();
+
+		private void OnDrivesLoading(FrameworkElement sender, object args)
+			=> ReloadDrives();
 
 		private void OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
 			NavigationViewItem item = (NavigationViewItem)args.SelectedItem;
-			if (item.Tag is NavTag tag)
-				MainFrame.Navigate(tag.PageType, tag.Param);
+			Uri uri = item.Tag switch {
+				string str => new Uri(str),
+				Uri uri1 => uri1,
+				_ => throw new InvalidDataException($"{item.Tag} is an invalid url")
+			};
+
+			Type? pageType = Type.GetType(uri.AbsolutePath.Trim('/'));
+			string param   = uri.Query.Trim('?');
+
+			MainFrame.Navigate(pageType ?? throw new NullReferenceException(), param);
 		}
 
-		private void OnNavigating(object sender, NavigatingCancelEventArgs e) {
-			// UNDONE: Set Page's property
+#endregion
+		private void OnNavigated(object sender, NavigationEventArgs e) {
+			if (sender is not Frame frame || frame.Content is not IModifiablePage page) return;
+			page.Modify(e.Parameter);
 		}
+
+		#region Inner Class
+		private sealed class NavItemEqualityComparer : EqualityComparer<object> {
+
+			public override bool Equals(object? x, object? y) {
+				if (x == y) return true;
+
+				if (x is NavigationViewItem first && y is NavigationViewItem second)
+					return first.Tag == second.Tag;
+
+				return false;
+			}
+
+			public override int GetHashCode([DisallowNull] object obj) 
+				=> obj == null ? 0 : obj.GetHashCode();
+		}
+#endregion
 	}
 }

@@ -32,7 +32,7 @@ namespace ExplorerX.Events.Handlers {
 
 			args.AddAll(new Dictionary<string, string> {
 				["Desktop"]		= "$Desktop",
-				["Pictures"]	= "$Pictrues",
+				["Pictures"]	= "$Pictures",
 				["Videos"]		= "$Videos",
 				["Music"]		= "$Music",
 				["Documents"]	= "$Documents",
