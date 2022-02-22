@@ -1,5 +1,5 @@
 ﻿namespace ExplorerX.Pages {
-	public interface IModifiablePage {
+	public interface IModifiable {
 		void Modify(object? param);
 	}
 }

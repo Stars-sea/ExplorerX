@@ -6,7 +6,7 @@ namespace ExplorerX.Pages {
 	/// <summary>
 	/// An empty page that can be used on its own or navigated to within a Frame.
 	/// </summary>
-	public sealed partial class ItemsRootPage : Page, IModifiablePage {
+	public sealed partial class ItemsRootPage : Page, IModifiable {
 		#region Dependency Props
 
 		public ItemsRootPageMode Mode {

@@ -12,7 +12,7 @@ namespace ExplorerX.Pages {
 	/// <para>File browsing page</para>
 	/// <para>文件浏览页</para>
 	/// </summary>
-	public sealed partial class ItemsViewPage : Page, IModifiablePage {
+	public sealed partial class ItemsViewPage : Page, IModifiable {
 		#region Dependency Props
 
 		public PathContainer ViewPath {

@@ -5,8 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -64,38 +63,26 @@ namespace ExplorerX.Pages {
 		private void OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
 			NavigationViewItem item = (NavigationViewItem)args.SelectedItem;
 			Uri uri = item.Tag switch {
-				string str => new Uri(str),
-				Uri uri1 => uri1,
-				_ => throw new InvalidDataException($"{item.Tag} is an invalid url")
+				string str	=> new Uri(str),
+				Uri	   uri1	=> uri1,
+				_			=> throw new UriFormatException($"{item.Tag} is an invalid url")
 			};
 
-			Type? pageType = Type.GetType(uri.AbsolutePath.Trim('/'));
-			string param   = uri.Query.Trim('?');
+			Type?  pageType = Type.GetType(uri.AbsolutePath.TrimStart('/'));
+			string param    = Uri.UnescapeDataString(uri.Query.TrimStart('?'));
 
-			MainFrame.Navigate(pageType ?? throw new NullReferenceException(), param);
+			Trace.Assert(pageType is not null);
+
+			if (pageType == MainFrame.SourcePageType &&
+				MainFrame.Content is IModifiable modifiable)
+				modifiable.Modify(param);
+			else MainFrame.Navigate(pageType, param);
 		}
+		#endregion
 
-#endregion
 		private void OnNavigated(object sender, NavigationEventArgs e) {
-			if (sender is not Frame frame || frame.Content is not IModifiablePage page) return;
-			page.Modify(e.Parameter);
+			if (MainFrame.Content is IModifiable modifiable)
+				modifiable.Modify(e.Parameter);
 		}
-
-		#region Inner Class
-		private sealed class NavItemEqualityComparer : EqualityComparer<object> {
-
-			public override bool Equals(object? x, object? y) {
-				if (x == y) return true;
-
-				if (x is NavigationViewItem first && y is NavigationViewItem second)
-					return first.Tag == second.Tag;
-
-				return false;
-			}
-
-			public override int GetHashCode([DisallowNull] object obj) 
-				=> obj == null ? 0 : obj.GetHashCode();
-		}
-#endregion
 	}
 }
