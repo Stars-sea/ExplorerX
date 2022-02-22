@@ -97,6 +97,17 @@ namespace ExplorerX.Data {
 			return false;
 		}
 
+		public bool ModifyValue(string key, T @new, [NotNullWhen(true)] out T? old) {
+			if (!TryGetValue(key, out old)) return false;
+
+			entries[key] = @new;
+			RegChanged?.Invoke(this, new(
+				new Dictionary<string, T> { [key] = old },
+				RegistryChangedArgs<T>.OperationMode.Modify
+			));
+			return true;
+		}
+
 		public bool TryGetValue(string key, [NotNullWhen(true)] out T? value)
 			=> entries.TryGetValue(key, out value);
 

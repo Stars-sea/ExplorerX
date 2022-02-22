@@ -7,6 +7,7 @@ namespace ExplorerX.Events {
 		RegistryChangedArgs<T>.OperationMode Operation
 	) where T : notnull {
 		public enum OperationMode {
+			Modify,
 			Register,
 			Unregister
 		}
