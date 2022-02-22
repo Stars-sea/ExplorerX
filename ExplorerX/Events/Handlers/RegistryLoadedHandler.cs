@@ -1,8 +1,5 @@
 ﻿using ExplorerX.Data;
 
-using PInvoke;
-
-using System;
 using System.Collections.Generic;
 
 
@@ -18,12 +15,12 @@ namespace ExplorerX.Events.Handlers {
 
 			// We do not use AppDataPaths because of its limit
 			args.AddAll(new Dictionary<string, object> {
-				["$Desktop"]	= Environment.SpecialFolder.Desktop.Get(),
-				["$Pictures"]	= Environment.SpecialFolder.MyPictures.Get(),
-				["$Videos"]		= Environment.SpecialFolder.MyVideos.Get(),
-				["$Music"]		= Environment.SpecialFolder.MyMusic.Get(),
-				["$Documents"]	= Environment.SpecialFolder.MyDocuments.Get(),
-				["$Downloads"]	= Shell32.SHGetKnownFolderPath(Shell32.KNOWNFOLDERID.FOLDERID_Downloads)
+				["$Desktop"]	= CLI.KnownFolder.Desktop.Path,
+				["$Pictures"]	= CLI.KnownFolder.Pictures.Path,
+				["$Videos"]		= CLI.KnownFolder.Videos.Path,
+				["$Music"]		= CLI.KnownFolder.Music.Path,
+				["$Documents"]	= CLI.KnownFolder.Documents.Path,
+				["$Downloads"]	= CLI.KnownFolder.Downloads.Path
 			});
 		}
 

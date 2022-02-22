@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using WindowId = Microsoft.UI.WindowId;
 
 using System;
 using System.Threading.Tasks;

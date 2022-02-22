@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplorerX", "ExplorerX\ExplorerX.csproj", "{BC255B89-2143-407C-80E1-B8F57F4313E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExplorerX", "ExplorerX\ExplorerX.csproj", "{BC255B89-2143-407C-80E1-B8F57F4313E7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExplorerX.Native", "ExplorerX.Native\ExplorerX.Native.vcxproj", "{EEF3F697-B794-47AC-9564-03522EF888EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,18 @@ Global
 		{BC255B89-2143-407C-80E1-B8F57F4313E7}.Release|x86.ActiveCfg = Release|x86
 		{BC255B89-2143-407C-80E1-B8F57F4313E7}.Release|x86.Build.0 = Release|x86
 		{BC255B89-2143-407C-80E1-B8F57F4313E7}.Release|x86.Deploy.0 = Release|x86
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Debug|arm64.ActiveCfg = Debug|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Debug|arm64.Build.0 = Debug|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Debug|x64.ActiveCfg = Debug|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Debug|x64.Build.0 = Debug|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Debug|x86.ActiveCfg = Debug|Win32
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Debug|x86.Build.0 = Debug|Win32
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Release|arm64.ActiveCfg = Release|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Release|arm64.Build.0 = Release|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Release|x64.ActiveCfg = Release|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Release|x64.Build.0 = Release|x64
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Release|x86.ActiveCfg = Release|Win32
+		{EEF3F697-B794-47AC-9564-03522EF888EA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -31,9 +31,4 @@ namespace ExplorerX.Data {
 			return path;
 		}
 	}
-
-	internal static class SpecialFolderExt {
-		public static string Get(this Environment.SpecialFolder folder)
-			=> Environment.GetFolderPath(folder);
-	}
 }
