@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <ShlObj.h>
 #include <KnownFolders.h>
 

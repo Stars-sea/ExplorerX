@@ -1,11 +1,16 @@
-﻿using ExplorerX.Data;
+﻿using ExplorerX.CLI;
+using ExplorerX.Components;
+using ExplorerX.Data;
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
@@ -16,13 +21,25 @@ namespace ExplorerX.Pages {
 	/// <para>通用页面</para>
 	/// </summary>
 	public sealed partial class CommonPage : Page {
-		private record NavTag(Type PageType, object Param);
-
 		public CommonPage() {
 			InitializeComponent();
 		}
 
 		#region Menu Items
+
+		private static WriteableBitmap GetSmallIconFromPath(string path) {
+			ShellFile    file   = new(path);
+			Trace.WriteLine(file.SmallIconHandle);
+			using Bitmap bitmap = Bitmap.FromHicon((IntPtr)file.SmallIconHandle);
+			
+			MemoryStream ms = new();
+			bitmap.Save(ms, ImageFormat.MemoryBmp);
+			ms.Position = 0;
+
+			WriteableBitmap writeable = new(bitmap.Width, bitmap.Height);
+			writeable.SetSource(ms.AsRandomAccessStream());
+			return writeable;
+		}
 
 		public void ReloadQuickAccess() {
 			var items = RegistryManagers.QuickAccess.Select(
@@ -44,14 +61,21 @@ namespace ExplorerX.Pages {
 				where drive.IsReady
 				let name = drive.Name[..^1]
 				orderby name
-				select new NavigationViewItem {
-					Content	= $"{drive.VolumeLabel}({name})",
-					Tag		= new Uri($"page:///ExplorerX.Pages.ItemsViewPage?{name}")
+				select new {
+					Path = name,
+					Item = new NavigationViewItem {
+						Content = $"{drive.VolumeLabel}({name})",
+						Tag     = new Uri($"page:///ExplorerX.Pages.ItemsViewPage?{name}")
+					}
 				};
-
+			
 			Drives.MenuItems.Clear();
-			foreach (NavigationViewItem item in items)
-				Drives.MenuItems.Add(item);
+			foreach (var item in items) {
+				Drives.MenuItems.Add(item.Item);
+				item.Item.Icon = new ImageSourceIcon {
+					ImageSource = GetSmallIconFromPath(item.Path)
+				};
+			}
 		}
 
 		private void OnQucikAccessLoading(FrameworkElement sender, object args) 
@@ -67,10 +91,10 @@ namespace ExplorerX.Pages {
 				Uri	   uri1	=> uri1,
 				_			=> throw new UriFormatException($"{item.Tag} is an invalid url")
 			};
-
+			
 			Type?  pageType = Type.GetType(uri.AbsolutePath.TrimStart('/'));
 			string param    = Uri.UnescapeDataString(uri.Query.TrimStart('?'));
-
+			
 			Trace.Assert(pageType is not null);
 
 			if (pageType == MainFrame.SourcePageType &&

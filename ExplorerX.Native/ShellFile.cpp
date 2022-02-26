@@ -4,7 +4,6 @@
 #include <vcclr.h>
 
 using namespace System;
-using namespace System::Runtime::InteropServices;
 using namespace ExplorerX;
 
 
@@ -18,20 +17,20 @@ Natives::NativeShellFile::~NativeShellFile()
 
 static inline SHFILEINFO GetInfo(LPCWSTR path, UINT flag) {
 	SHFILEINFO info = { 0 };
-	SHGetFileInfo(path, -1, &info, sizeof(info), flag);
+	SHGetFileInfo(path, FILE_ATTRIBUTE_NORMAL, &info, sizeof(info), flag);
 	return info;
 }
 
 HICON Natives::NativeShellFile::GetSmallIcon()
 {
 	if (hSmallIcon != nullptr) return hSmallIcon;
-	return hSmallIcon = GetInfo(path, SHGFI_SMALLICON).hIcon;
+	return hSmallIcon = GetInfo(path, SHGFI_ICON | SHGFI_SMALLICON).hIcon;
 }
 
 HICON Natives::NativeShellFile::GetLargeIcon()
 {
 	if (hLargeIcon != nullptr) return hLargeIcon;
-	return hLargeIcon = GetInfo(path, SHGFI_LARGEICON).hIcon;
+	return hLargeIcon = GetInfo(path, SHGFI_ICON | SHGFI_LARGEICON).hIcon;
 }
 
 void Natives::NativeShellFile::ClearSmallIcon()
@@ -76,11 +75,12 @@ CLI::ShellFile::ShellFile(String^ path)
 }
 
 IntPtr^ CLI::ShellFile::SmallIconHandle::get() {
-	return gcnew IntPtr(native->GetSmallIcon());
+	using System::Runtime::InteropServices::Marshal;
+	return IntPtr(native->GetSmallIcon());
 }
 
 IntPtr^ CLI::ShellFile::LargeIconHandle::get() {
-	return gcnew IntPtr(native->GetLargeIcon());
+	return IntPtr(native->GetLargeIcon());
 }
 
 String^ CLI::ShellFile::DisplayName::get() {
@@ -113,7 +113,6 @@ CLI::ExeType CLI::ShellFile::FileType::get() {
 }
 
 void CLI::ShellFile::ClearSmallIcon() { native->ClearSmallIcon(); }
-
 void CLI::ShellFile::ClearLargeIcon() { native->ClearLargeIcon(); }
 
 #pragma endregion

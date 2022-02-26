@@ -9,7 +9,8 @@
 
 // 添加要在此处预编译的标头
 #pragma comment(lib, "Shell32.lib")
-#pragma comment(lib, "Ole32.lib")
 #pragma comment(lib, "User32.lib")
+
+#include <Windows.h>
 
 #endif //PCH_H
